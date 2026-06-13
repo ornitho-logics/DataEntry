@@ -22,13 +22,25 @@
 #' )
 #' }
 #'
-emptyFrame <- function(user, host, db, pwd, table, n = 10, excludeColumns = "pk", preFilled, colorder) {
+emptyFrame <- function(
+  user,
+  host,
+  db,
+  pwd,
+  table,
+  n = 10,
+  excludeColumns = "pk",
+  preFilled,
+  colorder
+) {
   con = dbConnect(RMySQL::MySQL(), host = host, user = user, password = pwd)
   on.exit(dbDisconnect(con))
 
-
-  F = dbGetQuery(con, paste0("SELECT * from ", db, ".", table, " where FALSE")) |>
-      data.table()
+  F = dbGetQuery(
+    con,
+    paste0("SELECT * from ", db, ".", table, " where FALSE")
+  ) |>
+    data.table()
 
   if (!missing(excludeColumns)) {
     F = F[, setdiff(names(F), excludeColumns), with = FALSE]
@@ -37,7 +49,6 @@ emptyFrame <- function(user, host, db, pwd, table, n = 10, excludeColumns = "pk"
   if (!missing(colorder)) {
     setcolorder(F, colorder)
   }
-
 
   F = rbind(F, data.table(tempcol = rep(NA, n)), fill = TRUE)[, tempcol := NULL]
 
@@ -73,14 +84,18 @@ column_comment <- function(user, host, db, pwd, table, excludeColumns = "pk") {
   con = dbConnect(RMySQL::MySQL(), host = host, user = user, password = pwd)
   on.exit(dbDisconnect(con))
 
-
   x = dbGetQuery(
     con,
-    paste0("SELECT COLUMN_NAME `Column`, COLUMN_COMMENT description FROM  information_schema.COLUMNS
-								WHERE TABLE_SCHEMA =", shQuote(db), "AND TABLE_NAME =", shQuote(table))
-  ) 
+    paste0(
+      "SELECT COLUMN_NAME `Column`, COLUMN_COMMENT description FROM  information_schema.COLUMNS
+								WHERE TABLE_SCHEMA =",
+      shQuote(db),
+      "AND TABLE_NAME =",
+      shQuote(table)
+    )
+  )
 
-  x[! x$Column %in% excludeColumns, ]
+  x[!x$Column %in% excludeColumns, ]
 }
 
 
@@ -89,16 +104,17 @@ column_comment <- function(user, host, db, pwd, table, excludeColumns = "pk") {
 #' @param x  a data.table
 #' @export
 cleaner <- function(x) {
+  for (j in seq_along(x)) {
+    data.table::set(x, i = which(x[[j]] == 'NA'), j = j, value = NA)
+  }
 
-  for(j in seq_along(x) ) { 
-    data.table::set(x, i=which(x[[j]] ==  'NA'), j=j, value=NA) } 
-  
-  for(j in seq_along(x) ) { 
-    data.table::set(x, i=which(x[[j]] ==  ''), j=j, value=NA) } 
-  
+  for (j in seq_along(x)) {
+    data.table::set(x, i = which(x[[j]] == ''), j = j, value = NA)
+  }
+
   # o = x[rowSums( as.matrix( is.na(x) ))  != ncol(x) ]
   # return(o)
-  }
+}
 
 #' @name char2vec
 #' @title convert a list of strings to a vector
@@ -131,7 +147,7 @@ praise <- function() {
 #' @export
 encourage <- function() {
   x <- c(
-  "Potential data entry errors."
+    "Potential data entry errors."
   )
 
   sample(x, 1)
@@ -145,21 +161,23 @@ encourage <- function() {
 #'
 #' @param x A data.frame or data.table containing the data to be backed up.
 #' @param name The name associated to the file name
-#' @param backup_dir The directory where backups are stored. 
+#' @param backup_dir The directory where backups are stored.
 #'
 #' @return A character string with the full path to the backup CSV file.
 #' @export
-save_backup <- function(x,  name, backup_dir ) {
-  
+save_backup <- function(x, name, backup_dir) {
   db = getOption("DataEntry.db")
-  
+
   sub_dir = fs::path(backup_dir, db)
-  
+
   fs::dir_create(sub_dir, recurse = TRUE)
-  
-  backup_filename = fs::path(sub_dir, glue::glue("backup_{db}_{name}_{format(Sys.time(), '%Y%m%d_%H%M%S')}.csv"))
-  
+
+  backup_filename = fs::path(
+    sub_dir,
+    glue::glue("backup_{db}_{name}_{format(Sys.time(), '%Y%m%d_%H%M%S')}.csv")
+  )
+
   fwrite(x, file = backup_filename)
-  
+
   backup_filename
 }

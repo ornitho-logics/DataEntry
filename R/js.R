@@ -1,11 +1,10 @@
-
-
 #' @name js_insertMySQLTimeStamp
 #' @title translate two forward slashes to a Mysql timestamp
 #' @note used inside shiny apps. See http://keycode.info/
 #' @export
 js_insertMySQLTimeStamp <- function() {
-  HTML("
+  HTML(
+    "
     <script>
       $(function() {
          $(document).on('keyup', 'input, textarea', function(e) {
@@ -17,29 +16,8 @@ js_insertMySQLTimeStamp <- function() {
          });
       });
     </script>
-  ")
-}
-
-
-#' @name jquery_change_by_id
-#' @title find and replace given `div` id.
-#' @param divid   div id
-#' @param newtext new text entry
-#' @note used inside shiny apps
-#' @export
-jquery_change_by_id <- function(divid, newtext) {
-  
-  # $("#TABLE_NAME").css("color", "red");
-
-  x = (paste0('<script>
-  $(document).ready(function() {
-  $("#', divid, '").text("',newtext,'");
-  });
-  </script>'
-  ))
-
-  HTML(x)
-
+  "
+  )
 }
 
 
@@ -49,20 +27,19 @@ jquery_change_by_id <- function(divid, newtext) {
 #' @note used inside shiny apps
 #' @export
 js_before_unload <- function(msg = "Are you sure you want to exit the page?") {
-  
-     HTML(
-
-      paste0('
+  HTML(
+    paste0(
+      '
       <script>
        window.onbeforeunload = function() {
-        return '  , shQuote(msg)  , ';
+        return ',
+      shQuote(msg),
+      ';
       }
       </script>
-        ') 
-
-      )
-
-
+        '
+    )
+  )
 }
 
 
@@ -73,19 +50,22 @@ js_before_unload <- function(msg = "Are you sure you want to exit the page?") {
 #' @note used inside shiny apps
 #' @export
 jquery_change_by_id <- function(divid, newtext) {
-
   # $("#TABLE_NAME").css("color", "red");
 
-  x <- (paste0('<script>
+  x <- (paste0(
+    '<script>
   $(document).ready(function() {
-  $("#', divid, '").text("', newtext, '");
+  $("#',
+    divid,
+    '").text("',
+    newtext,
+    '");
   });
-  </script>'))
+  </script>'
+  ))
 
   HTML(x)
 }
-
-
 
 
 #' @name js_hot_tippy_header
@@ -97,12 +77,11 @@ jquery_change_by_id <- function(divid, newtext) {
 #' @seealso [DataEntry::column_comment()]
 #' @export
 js_hot_tippy_header <- function(x, tippy_column) {
-
   x <- cbind(loc = glue::glue("[,{1:nrow(x)}]"), x)
   jj <- jsonlite::toJSON(x, auto_unbox = TRUE)
-  
+
   js_code <- glue::glue(
-"function(i, TH) {{
+    "function(i, TH) {{
   var titleLookup = {jj};
   if (TH._tippy) {{
     TH._tippy.destroy();
@@ -113,7 +92,8 @@ js_hot_tippy_header <- function(x, tippy_column) {
       allowHTML: true
     }});
   }}
-}}")
-  
+}}"
+  )
+
   htmlwidgets::JS(js_code)
 }
