@@ -13,10 +13,10 @@ shiny ui based on shinyWidgets
 if (interactive()) {
 require(DataEntry)
 shinyApp(
- ui = dropDownNavPage_edit(), 
- server = function(input, output) { 
-     output$table <- renderRHandsontable( 
-         rhandsontable(matrix(as.integer(NA), 
+ ui = dropDownNavPage_edit(),
+ server = function(input, output) {
+     output$table <- renderRHandsontable(
+         rhandsontable(matrix(as.integer(NA),
 nrow = 30, ncol = 20) |> data.table() ) )
  } )
 

@@ -5,8 +5,6 @@
 \title{find and replace given \code{div} id.}
 \usage{
 jquery_change_by_id(divid, newtext)
-
-jquery_change_by_id(divid, newtext)
 }
 \arguments{
 \item{divid}{div id}
@@ -15,11 +13,7 @@ jquery_change_by_id(divid, newtext)
 }
 \description{
 find and replace given \code{div} id.
-
-find and replace given \code{div} id.
 }
 \note{
-used inside shiny apps
-
 used inside shiny apps
 }

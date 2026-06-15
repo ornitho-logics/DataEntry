@@ -1,5 +1,5 @@
 Package: DataEntry
-Version: 2025.0.2
+Version: 2026.0.1
 Author: Mihai Valcu
 Maintainer: Mihai Valcu <Mihai.Valcu@bi.mpg.de>
 Title: Data entry interfaces
@@ -23,8 +23,7 @@ Imports:
     shinydashboard,
     shinytoastr,
     shinyWidgets,
-    tableHTML,
-    DataEntry.validation
+    tableHTML
 Suggests:
     devtools,
     gtools,
@@ -32,5 +31,5 @@ Suggests:
 Remotes: 
     mpio-be/DataEntry.validation
 Roxygen: list(markdown = TRUE)    
-RoxygenNote: 7.3.3
 Encoding: UTF-8
+Config/roxygen2/version: 8.0.0

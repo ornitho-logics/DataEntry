@@ -1,10 +1,11 @@
 
 CREATE DATABASE IF NOT EXISTS tests;
 
-CREATE USER 'testuser'@'localhost' IDENTIFIED BY 'testuser';
+CREATE USER IF NOT EXISTS 'testuser'@'127.0.0.1' IDENTIFIED BY 'testuser';
 GRANT ALTER, CREATE, CREATE VIEW, DELETE, DROP, INDEX, INSERT, SELECT, SHOW VIEW, TRIGGER, UPDATE
-ON tests.* TO 'testuser'@'localhost';
-FLUSH PRIVILEGES;
+ON tests.* TO 'testuser'@'127.0.0.1';
+
+
 
 USE tests;
 DROP TABLE IF EXISTS data_entry; 
