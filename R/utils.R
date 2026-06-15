@@ -1,3 +1,39 @@
+hot_safe_table <- function(x) {
+  posix_cols = names(x)[
+    vapply(x, inherits, logical(1), what = "POSIXt")
+  ]
+
+  if (length(posix_cols)) {
+    x[,
+      (posix_cols) := lapply(.SD, function(z) {
+        out = format(z, "%Y-%m-%d %H:%M:%S")
+        out[is.na(z)] = NA_character_
+        out
+      }),
+      .SDcols = posix_cols
+    ]
+  }
+
+  date_cols = names(x)[
+    vapply(x, inherits, logical(1), what = "Date")
+  ]
+
+  if (length(date_cols)) {
+    x[, (date_cols) := lapply(.SD, as.character), .SDcols = date_cols]
+  }
+
+  difftime_cols = names(x)[
+    vapply(x, inherits, logical(1), what = "difftime")
+  ]
+
+  if (length(difftime_cols)) {
+    x[, (difftime_cols) := lapply(.SD, as.character), .SDcols = difftime_cols]
+  }
+
+  x
+}
+
+
 #' emptyFrame
 #' emptyFrame used by handsontable
 #' @param user             db user
@@ -33,14 +69,15 @@ emptyFrame <- function(
   preFilled,
   colorder
 ) {
-  con = dbConnect(RMySQL::MySQL(), host = host, user = user, password = pwd)
+  con = dbConnect(RMariaDB::MariaDB(), host = host, user = user, password = pwd)
   on.exit(dbDisconnect(con))
 
   F = dbGetQuery(
     con,
     paste0("SELECT * from ", db, ".", table, " where FALSE")
   ) |>
-    data.table()
+    data.table() |>
+    hot_safe_table()
 
   if (!missing(excludeColumns)) {
     F = F[, setdiff(names(F), excludeColumns), with = FALSE]
@@ -81,7 +118,7 @@ emptyFrame <- function(
 #' @note this is just a convenience function around a "Select .. from information_schema" query.
 #' @export
 column_comment <- function(user, host, db, pwd, table, excludeColumns = "pk") {
-  con = dbConnect(RMySQL::MySQL(), host = host, user = user, password = pwd)
+  con = dbConnect(RMariaDB::MariaDB(), host = host, user = user, password = pwd)
   on.exit(dbDisconnect(con))
 
   x = dbGetQuery(
@@ -120,12 +157,13 @@ cleaner <- function(x) {
 #' @title convert a list of strings to a vector
 #' @param x list
 #' @export
-char2vec <- function(x) {
-  lapply(x, function(i) eval(parse(text = paste("c(", i, ")")))) |>
-    unlist() |>
+char2vec = function(x) {
+  strsplit(x, ",", fixed = TRUE) |>
+    unlist(use.names = FALSE) |>
+    trimws() |>
+    as.integer() |>
     unique()
 }
-
 
 #' @name praise
 #' @title praises

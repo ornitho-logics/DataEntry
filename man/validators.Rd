@@ -106,20 +106,21 @@ all validators (except is.na_validator) ignore NA entries.
 \if{html}{\out{<div class="sourceCode">}}\preformatted{`v`  for nchar_validator: a data.table with variable and n (number of characters)
 }\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{ `v`   for is.element_validator: a data.table with variable and set (a vector of lists containing the valid elements for each variable )
+\if{html}{\out{<div class="sourceCode">}}\preformatted{ `v`   for is.element_validator: a data.table with variable and set
+           (a vector of lists containing the valid elements for each variable )
 }\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{ `v`  for is.duplicate_validator: a data.table with variable and set (a vector of lists containing the already existing values for each variable )
+\if{html}{\out{<div class="sourceCode">}}\preformatted{ `v`  for is.duplicate_validator: a data.table with variable and set
+          (a vector of lists containing the already existing values for each variable )
 }\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{ `v`   for is.identical_validator: a data.table with variable and x (the value to test against)
+\if{html}{\out{<div class="sourceCode">}}\preformatted{ `v`   for is.identical_validator: a data.table with variable and x
+             (the value to test against)
 }\if{html}{\out{</div>}}
 }
 \examples{
-#----------------------------------------------------#
 x = data.table(v1 = c(1,2, NA, NA), v2  = c(1,2, NA, NA) )
 is.na_validator(x)
-#----------------------------------------------------#
 t = Sys.time(); d = Sys.Date()
 require(data.table)
 x = data.table(
@@ -131,58 +132,46 @@ x = data.table(zz =  c( as.character(d -1), as.character(d ) )  )
 POSIXct_validator(x)
 
 
- #----------------------------------------------------#
 x = data.table(v1 = c('02:04' , '16:56', '23:59'  ),
  v2 = c('24:04' , NA, '23:59'  ) )
 hhmm_validator(x)
- #----------------------------------------------------#
 x = data.table(v1 = c('2017-01-21' , '2012-04-21', '2017-05-21'  ),
                v2 = c('2017' , '2017-01-xx', '2015-01-09'  ) )
 print(date_validator(x))
- #----------------------------------------------------#
 x = data.table(v1 = c('2017-01-21 02:04' , '2012-04-21 16:56', '2017-05-21 23:59'  ),
                v2 = c('2017-07-27 00:00' , '2017-01-21', '2015-01-09 23:59'  ) )
 datetime_validator(x)
- #----------------------------------------------------#
 x = data.table(v1 = c('2017-01-21 02:04:55' , '2012-04-21 16:56:01', '2017-05-21 23:59:00'  ),
                v2 = c('2017-07-27 00:00' , '2017-01-21', '2015-01-09 23:59:01'  ) )
 datetime_validatorSS(x)
- #----------------------------------------------------#
 x = data.table(cap_time = c('10:04' , '16:40', '01:55'),
                bleeding_time = c('10:10' , '16:30', '04:08'), rowid =1:3)
 t = time_order_validator(x, time1 = 'cap_time',
 time2 = 'bleeding_time')
- #----------------------------------------------------#
 x = data.table(cap_time = c('2019-06-03 16:04:47' , '2019-04-05 16:40', '2019-04-05 01:55'),
                bleeding_time = c('2019-06-03 16:00:54' , '2019-04-05 16:30', '2019-04-05 04:08'), rowid = 1:3)
 t = time_order_validator(x, time1 = 'cap_time', time2 = 'bleeding_time')
- #----------------------------------------------------#
 x = data.table(v1 = runif(5)  , v2 = runif(5) )
 v = data.table(variable = c('v1', 'v2'), lq = c(-1, 0.2), uq = c(.7, 0.5) )
 interval_validator(x,v)
- #-----------------------#
+
  x = data.table(box = c(0, 1, 100, 300))
  v = data.table(variable = 'box', lq = 1, uq = 277 )
 interval_validator(x,v)
- #----------------------------------------------------#
 x = data.table(v1 = c('x', 'xy', 'x')  , v2 = c('xx', 'x', 'xxx')  )
 v = data.table(variable = c('v1', 'v2'), n = c(1, 2) )
 nchar_validator(x, v)
- #----------------------------------------------------#
 x = data.table(v1 = c('A', 'B', 'C')  , v2 = c('ZZ', 'YY', 'QQ')  )
 v = data.table(variable = c('v1', 'v2'),
                set = c( list( c('A', 'C') ), list( c('YY')  )) )
 is.element_validator(x, v)
- #----------------------------------------------------#
 x = data.table(v1 = c('A', 'B', 'C')  , v2 = c('ZZ', 'YY', 'QQ')  )
 v = data.table(variable = c('v1', 'v2'),
                set = c( list( c('A', 'C') ), list( c('YY')  )) )
 is.duplicate_validator(x, v)
- #----------------------------------------------------#
 x = data.table(v1 = 1:3  , v2 = c('a', 'b', 'c')  )
 v = data.table(variable = c('v1', 'v2'),  x = c(1, 'd'))
 is.identical_validator(x, v)
- #----------------------------------------------------#
 x = data.table(id = c("x2-011-05-19", "x2-011-05-2019", "x2-011-5-2019", "x2-011-  5-2019") )
  is.regexp_validator(x, regexp = "^x[1-9]-\\\\d{3}-\\\\b(?:05|09|11)\\\\b-19$")
 }

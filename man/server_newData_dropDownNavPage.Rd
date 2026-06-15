@@ -18,5 +18,5 @@ Shiny server function
 }
 \note{
 user,host,db,pwd, uitable, comments, describeTable, getDataSummary are hardwired and should be defined in global.R
-inspectors are loaded with  \code{\link[DataEntry.validation:inspector_loader]{DataEntry.validation::inspector_loader()}}
+inspectors are loaded with  \code{\link[=inspector_loader]{inspector_loader()}}
 }

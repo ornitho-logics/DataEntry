@@ -15,7 +15,7 @@
 
 executeDB <- function(action, tableName, x, host, user, db, pwd) {
 	con = dbConnect(
-		RMySQL::MySQL(),
+		RMariaDB::MariaDB(),
 		host = host,
 		user = user,
 		db = db,
@@ -52,7 +52,7 @@ executeDB <- function(action, tableName, x, host, user, db, pwd) {
 #' @param table            db table
 #' @export
 grand_n <- function(user, host, db, pwd, table) {
-	con = dbConnect(RMySQL::MySQL(), host = host, user = user, password = pwd)
+	con = dbConnect(RMariaDB::MariaDB(), host = host, user = user, password = pwd)
 	on.exit(dbDisconnect(con))
 
 	dbGetQuery(con, paste0('select count(*) n from ', db, '.', table))$n

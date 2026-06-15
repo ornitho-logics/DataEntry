@@ -6,13 +6,13 @@
 #'
 #' @export
 #' @note user,host,db,pwd, uitable, comments, describeTable, getDataSummary are hardwired and should be defined in global.R
-#'       inspectors are loaded with  [DataEntry.validation::inspector_loader()]
+#'       inspectors are loaded with  [inspector_loader()]
 #'
 server_newData_dropDownNavPage <- function(input, output, session) {
   # Settings
   # Is no-validation column present in table ?
   con = dbConnect(
-    RMySQL::MySQL(),
+    RMariaDB::MariaDB(),
     host = host,
     user = user,
     db = db,
@@ -37,7 +37,7 @@ server_newData_dropDownNavPage <- function(input, output, session) {
     cleaner(o)
     class(o) = c(class(o), tableName) # inspector() uses S3
 
-    DataEntry.validation::inspector_loader(path = "inspector.R")
+    inspector_loader(path = "inspector.R")
 
     o
   })
@@ -53,7 +53,7 @@ server_newData_dropDownNavPage <- function(input, output, session) {
     # Data validation
 
     cc = inspector(x) |> evalidators()
-    # assign('cc', cc , envir = .GlobalEnv)
+    # assign('cc', cc, envir = .GlobalEnv)
 
     # errors
     if (nrow(cc) > 0 && !ignore_validators) {
@@ -92,11 +92,11 @@ server_newData_dropDownNavPage <- function(input, output, session) {
       if (hasnov) {
         x = copy(x)
         x[, nov := as.integer(0)]
-        x[char2vec(cc$rowid) |> as.integer(), nov := 1L]
+        x[char2vec(cc$rowid), nov := 1L]
       }
 
       con = dbConnect(
-        RMySQL::MySQL(),
+        RMariaDB::MariaDB(),
         host = host,
         user = user,
         db = db,

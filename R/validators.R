@@ -1,6 +1,4 @@
-# ==========================================================================
 # Generic validators.
-# ==========================================================================
 
 #' @name          validators
 #' @title         data validators
@@ -16,7 +14,6 @@ NULL
 #' @name   is.na_validator
 #' @export
 #' @examples
-#' #----------------------------------------------------#
 #' x = data.table(v1 = c(1,2, NA, NA), v2  = c(1,2, NA, NA) )
 #' is.na_validator(x)
 is.na_validator <- function(x, reason = 'mandatory') {
@@ -31,7 +28,6 @@ is.na_validator <- function(x, reason = 'mandatory') {
 #' @param ago       number of days indicating old data entry (set to a week)
 #' @export
 #' @examples
-#' #----------------------------------------------------#
 #' t = Sys.time(); d = Sys.Date()
 #' require(data.table)
 #' x = data.table(
@@ -66,7 +62,6 @@ POSIXct_validator <- function(
 #' @name    hhmm_validator
 #' @export
 #' @examples
-#'  #----------------------------------------------------#
 #' x = data.table(v1 = c('02:04' , '16:56', '23:59'  ),
 #'  v2 = c('24:04' , NA, '23:59'  ) )
 #' hhmm_validator(x)
@@ -85,7 +80,6 @@ hhmm_validator <- function(x, reason = 'invalid time') {
 #' @name    date_validator
 #' @export
 #' @examples
-#'  #----------------------------------------------------#
 #' x = data.table(v1 = c('2017-01-21' , '2012-04-21', '2017-05-21'  ),
 #'                v2 = c('2017' , '2017-01-xx', '2015-01-09'  ) )
 #' print(date_validator(x))
@@ -104,7 +98,6 @@ date_validator <- function(x, reason = 'invalid date - should be: yyyy-mm-dd') {
 #' @name    datetime_validator
 #' @export
 #' @examples
-#'  #----------------------------------------------------#
 #' x = data.table(v1 = c('2017-01-21 02:04' , '2012-04-21 16:56', '2017-05-21 23:59'  ),
 #'                v2 = c('2017-07-27 00:00' , '2017-01-21', '2015-01-09 23:59'  ) )
 #' datetime_validator(x)
@@ -126,7 +119,6 @@ datetime_validator <- function(
 #' @name    datetime_validator with seconds
 #' @export
 #' @examples
-#'  #----------------------------------------------------#
 #' x = data.table(v1 = c('2017-01-21 02:04:55' , '2012-04-21 16:56:01', '2017-05-21 23:59:00'  ),
 #'                v2 = c('2017-07-27 00:00' , '2017-01-21', '2015-01-09 23:59:01'  ) )
 #' datetime_validatorSS(x)
@@ -149,10 +141,9 @@ datetime_validatorSS <- function(
 #' @param time1  start time to compare
 #' @param time2  end time to compare
 #' @param units character string of units in of the time_max
-#' @param time_max maximal time difference that is passing validation
+#' @param time_max max time difference (in units) that is passing validation
 #' @export
 #' @examples
-#'  #----------------------------------------------------#
 #' x = data.table(cap_time = c('10:04' , '16:40', '01:55'),
 #'                bleeding_time = c('10:10' , '16:30', '04:08'), rowid =1:3)
 #' t = time_order_validator(x, time1 = 'cap_time',
@@ -176,13 +167,17 @@ time_order_validator <- function(
   o = x[, c(time1, time2, 'rowid'), with = FALSE]
   setnames(o, c('time1', 'time2', 'rowid'))
 
-  f = function(x) strptime(x, format = "%H:%M") %>% as.POSIXct
+  f = function(x) strptime(x, format = "%H:%M") |> as.POSIXct()
 
   if (!inherits(o$time1, 'POSIXt')) {
     o[, dt1 := f(time1)]
+  } else {
+    o[, dt1 := time1]
   }
-  if (!inherits(o$time2, 'POSIXt')) {
+  if (!inherits(o$time2, "POSIXt")) {
     o[, dt2 := f(time2)]
+  } else {
+    o[, dt2 := time2]
   }
 
   o[, difft := difftime(dt2, dt1, units = units)]
@@ -203,7 +198,6 @@ time_order_validator <- function(
 #' @param time_max maximal time difference that is passing validation
 #' @export
 #' @examples
-#'  #----------------------------------------------------#
 #' x = data.table(cap_time = c('2019-06-03 16:04:47' , '2019-04-05 16:40', '2019-04-05 01:55'),
 #'                bleeding_time = c('2019-06-03 16:00:54' , '2019-04-05 16:30', '2019-04-05 04:08'), rowid = 1:3)
 #' t = time_order_validator(x, time1 = 'cap_time', time2 = 'bleeding_time')
@@ -248,11 +242,10 @@ datetime_order_validator <- function(
 #' @note     `v` for interval_validator: a data.table with variable, lq, uq columns
 #' @export
 #' @examples
-#'  #----------------------------------------------------#
 #' x = data.table(v1 = runif(5)  , v2 = runif(5) )
 #' v = data.table(variable = c('v1', 'v2'), lq = c(-1, 0.2), uq = c(.7, 0.5) )
 #' interval_validator(x,v)
-#'  #-----------------------#
+#'
 #'  x = data.table(box = c(0, 1, 100, 300))
 #'  v = data.table(variable = 'box', lq = 1, uq = 277 )
 #' interval_validator(x,v)
@@ -277,7 +270,6 @@ interval_validator <- function(
 #' @note     `v`  for nchar_validator: a data.table with variable and n (number of characters)
 #' @export
 #' @examples
-#'  #----------------------------------------------------#
 #' x = data.table(v1 = c('x', 'xy', 'x')  , v2 = c('xx', 'x', 'xxx')  )
 #' v = data.table(variable = c('v1', 'v2'), n = c(1, 2) )
 #' nchar_validator(x, v)
@@ -294,10 +286,10 @@ nchar_validator <- function(x, v, reason = 'incorrect number of characters') {
 
 #' @rdname    validators
 #' @name      is.element_validator
-#' @note      `v`   for is.element_validator: a data.table with variable and set (a vector of lists containing the valid elements for each variable )
+#' @note      `v`   for is.element_validator: a data.table with variable and set
+#'                (a vector of lists containing the valid elements for each variable )
 #' @export
 #' @examples
-#'  #----------------------------------------------------#
 #' x = data.table(v1 = c('A', 'B', 'C')  , v2 = c('ZZ', 'YY', 'QQ')  )
 #' v = data.table(variable = c('v1', 'v2'),
 #'                set = c( list( c('A', 'C') ), list( c('YY')  )) )
@@ -316,10 +308,10 @@ is.element_validator <- function(x, v, reason = 'invalid entry') {
 
 #' @rdname    validators
 #' @name      is.duplicate_validator
-#' @note      `v`  for is.duplicate_validator: a data.table with variable and set (a vector of lists containing the already existing values for each variable )
+#' @note      `v`  for is.duplicate_validator: a data.table with variable and set
+#'               (a vector of lists containing the already existing values for each variable )
 #' @export
 #' @examples
-#'  #----------------------------------------------------#
 #' x = data.table(v1 = c('A', 'B', 'C')  , v2 = c('ZZ', 'YY', 'QQ')  )
 #' v = data.table(variable = c('v1', 'v2'),
 #'                set = c( list( c('A', 'C') ), list( c('YY')  )) )
@@ -338,10 +330,10 @@ is.duplicate_validator <- function(x, v, reason = 'duplicate entry') {
 
 #' @rdname    validators
 #' @name      is.identical_validator
-#' @note      `v`   for is.identical_validator: a data.table with variable and x (the value to test against)
+#' @note      `v`   for is.identical_validator: a data.table with variable and x
+#'                  (the value to test against)
 #' @export
 #' @examples
-#'  #----------------------------------------------------#
 #' x = data.table(v1 = 1:3  , v2 = c('a', 'b', 'c')  )
 #' v = data.table(variable = c('v1', 'v2'),  x = c(1, 'd'))
 #' is.identical_validator(x, v)
@@ -363,7 +355,6 @@ is.identical_validator <- function(x, v, reason = 'invalid entry') {
 #' @param     regexp   for is.regexp_validator: a regexp expression
 #' @export
 #' @examples
-#'  #----------------------------------------------------#
 #' x = data.table(id = c("x2-011-05-19", "x2-011-05-2019", "x2-011-5-2019", "x2-011-  5-2019") )
 #'  is.regexp_validator(x, regexp = "^x[1-9]-\\d{3}-\\b(?:05|09|11)\\b-19$")
 

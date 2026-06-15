@@ -10,13 +10,16 @@
 server_editDB_inPlace <- function(input, output, session) {
   getDBtable <- function() {
     con = dbConnect(
-      RMySQL::MySQL(),
+      RMariaDB::MariaDB(),
       host = host,
       user = user,
       db = db,
       password = pwd
     )
-    dat = dbReadTable(con, tableName) |> setDT()
+    dat = dbReadTable(con, tableName) |>
+      setDT() |>
+      hot_safe_table()
+
     dbDisconnect(con)
 
     empty_rows = as.data.frame(matrix(NA, ncol = ncol(dat), nrow = 10))
@@ -45,7 +48,7 @@ server_editDB_inPlace <- function(input, output, session) {
     bk_path = save_backup(editedData, tableName, backup_dir = backupdir)
 
     con <- dbConnect(
-      RMySQL::MySQL(),
+      RMariaDB::MariaDB(),
       host = host,
       user = user,
       db = db,
