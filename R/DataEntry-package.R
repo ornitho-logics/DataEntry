@@ -1,8 +1,8 @@
 #' Data entry 'in-browser' interfaces
 #'
-#' Data-entry front-end; MySQL/MariaDB backend. Flexible support for front-end data validation.
+#' Data-entry front-end with a MariaDB backend. Flexible support for front-end data validation.
 #'
-#' @import methods RMySQL data.table glue stringr
+#' @import methods RMariaDB data.table glue stringr
 #'
 #' @import rhandsontable shiny shinydashboard shinytoastr shinyWidgets tableHTML praise
 #'
@@ -43,6 +43,5 @@ utils::globalVariables(c(
   'v',
   'w',
   'dbGetQuery',
-  'describeTable',
-  'dbExecute'
+  'describeTable'
 ))

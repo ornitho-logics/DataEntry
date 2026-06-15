@@ -13,6 +13,7 @@ Depends:
     RMariaDB
 Imports:
     methods,
+    DBI,
     glue,
     fs,
     magrittr,
@@ -25,7 +26,8 @@ Imports:
     shinyWidgets,
     tableHTML,
     jsonlite,
-    htmlwidgets
+    htmlwidgets,
+    htmltools
 Suggests:
     devtools,
     gtools,

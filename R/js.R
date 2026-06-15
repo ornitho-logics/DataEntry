@@ -1,3 +1,36 @@
+#' DataEntry HTML dependencies
+#'
+#' @return HTML dependencies used by DataEntry Shiny apps.
+#' @export
+dataentry_deps <- function() {
+  htmltools::tagList(
+    htmltools::htmlDependency(
+      name = "dataentry-style",
+      version = as.character(utils::packageVersion("DataEntry")),
+      src = c(file = "style"),
+      stylesheet = "style.css",
+      package = "DataEntry"
+    ),
+
+    htmltools::htmlDependency(
+      name = "popper",
+      version = "2.11.8",
+      src = c(file = "JS"),
+      script = "popper.js",
+      package = "DataEntry"
+    ),
+
+    htmltools::htmlDependency(
+      name = "tippy",
+      version = "6.3.7",
+      src = c(file = "JS"),
+      script = "tippy.js",
+      package = "DataEntry"
+    )
+  )
+}
+
+
 #' @name js_insertMySQLTimeStamp
 #' @title translate two forward slashes to a Mysql timestamp
 #' @note used inside shiny apps. See http://keycode.info/

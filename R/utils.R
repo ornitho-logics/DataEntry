@@ -33,7 +33,6 @@ hot_safe_table <- function(x) {
   x
 }
 
-
 #' emptyFrame
 #' emptyFrame used by handsontable
 #' @param user             db user
@@ -69,14 +68,12 @@ emptyFrame <- function(
   preFilled,
   colorder
 ) {
-  con = dbConnect(RMariaDB::MariaDB(), host = host, user = user, password = pwd)
-  on.exit(dbDisconnect(con))
-
-  F = dbGetQuery(
-    con,
-    paste0("SELECT * from ", db, ".", table, " where FALSE")
+  F = db_get(
+    query = paste0("SELECT * from ", db, ".", table, " where FALSE"),
+    host = host,
+    user = user,
+    pwd = pwd
   ) |>
-    data.table() |>
     hot_safe_table()
 
   if (!missing(excludeColumns)) {
@@ -95,13 +92,6 @@ emptyFrame <- function(
     }
   }
 
-  # convert un-handled rhandsontable types to characters (RMariaDB)
-  # difftime_to_char = which( F[, sapply(.SD, function(x) inherits(x, 'difftime') ) ] ) |> names()
-  # F[,(difftime_to_char) := lapply(.SD, as.character), .SDcols = difftime_to_char]
-  #
-  # POSIXt_to_char = which( F[, sapply(.SD, function(x) inherits(x, 'POSIXt') ) ] ) |> names()
-  # F[,(POSIXt_to_char) := lapply(.SD, as.character), .SDcols = POSIXt_to_char]
-
   F
 }
 
@@ -118,18 +108,17 @@ emptyFrame <- function(
 #' @note this is just a convenience function around a "Select .. from information_schema" query.
 #' @export
 column_comment <- function(user, host, db, pwd, table, excludeColumns = "pk") {
-  con = dbConnect(RMariaDB::MariaDB(), host = host, user = user, password = pwd)
-  on.exit(dbDisconnect(con))
-
-  x = dbGetQuery(
-    con,
-    paste0(
-      "SELECT COLUMN_NAME `Column`, COLUMN_COMMENT description FROM  information_schema.COLUMNS
-								WHERE TABLE_SCHEMA =",
+  x = db_get(
+    query = paste0(
+      "SELECT COLUMN_NAME `Column`, COLUMN_COMMENT description FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = ",
       shQuote(db),
-      "AND TABLE_NAME =",
+      " AND TABLE_NAME = ",
       shQuote(table)
-    )
+    ),
+    host = host,
+    user = user,
+    pwd = pwd
   )
 
   x[!x$Column %in% excludeColumns, ]
@@ -181,7 +170,6 @@ praise <- function() {
 
 #' @name encourage
 #' @title encourages
-#' @note adapted from https://github.com/r-lib/testthat
 #' @export
 encourage <- function() {
   x <- c(
@@ -195,7 +183,7 @@ encourage <- function() {
 #' Save Backup of Data to CSV
 #'
 #' Creates a timestamped CSV backup of the provided data and saves it in a subdirectory
-#' named after the database (as defined by `getOption("DataEntry.db")`) within the backup directory.
+#' named after the database (for now: get("db", envir = .GlobalEnv) ) within the backup directory.
 #'
 #' @param x A data.frame or data.table containing the data to be backed up.
 #' @param name The name associated to the file name
@@ -204,7 +192,7 @@ encourage <- function() {
 #' @return A character string with the full path to the backup CSV file.
 #' @export
 save_backup <- function(x, name, backup_dir) {
-  db = getOption("DataEntry.db")
+  db = get("db", envir = .GlobalEnv)
 
   sub_dir = fs::path(backup_dir, db)
 

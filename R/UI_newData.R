@@ -20,7 +20,7 @@ dropDownNavPage <- function(tableName = 'Table Name') {
   bootstrapPage(
     theme = NULL,
 
-    includeCSS(system.file("style", "style.css", package = "DataEntry")),
+    dataentry_deps(),
 
     # HOT TABLE
     rHandsontableOutput("table", width = "100%"),
@@ -33,10 +33,6 @@ dropDownNavPage <- function(tableName = 'Table Name') {
 
     # SUPPORT
     uiOutput("run_save"),
-
-    includeScript(system.file("JS", "popper.js", package = "DataEntry")),
-
-    includeScript(system.file("JS", "tippy.js", package = "DataEntry")),
 
     useToastr(),
 

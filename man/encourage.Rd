@@ -9,6 +9,3 @@ encourage()
 \description{
 encourages
 }
-\note{
-adapted from https://github.com/r-lib/testthat
-}

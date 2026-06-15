@@ -5,17 +5,9 @@
 \title{grand_n
 N rows in a db table}
 \usage{
-grand_n(user, host, db, pwd, table)
+grand_n(table)
 }
 \arguments{
-\item{user}{db user}
-
-\item{host}{db host}
-
-\item{db}{db name}
-
-\item{pwd}{pwd}
-
 \item{table}{db table}
 }
 \description{

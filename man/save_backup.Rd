@@ -18,5 +18,5 @@ A character string with the full path to the backup CSV file.
 }
 \description{
 Creates a timestamped CSV backup of the provided data and saves it in a subdirectory
-named after the database (as defined by \code{getOption("DataEntry.db")}) within the backup directory.
+named after the database (for now: get("db", envir = .GlobalEnv) ) within the backup directory.
 }

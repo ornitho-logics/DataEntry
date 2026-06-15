@@ -5,17 +5,11 @@
 #' @param session   Shiny server
 #'
 #' @export
-#' @note user,host,db,pwd, uitable, comments, describeTable, getDataSummary,backupdir are hardwired and should be defined in global.R
+#' @note uitable, comments, describeTable, getDataSummary,backupdir are hardwired and should be defined in global.R
 
 server_editDB_inPlace <- function(input, output, session) {
   getDBtable <- function() {
-    con = dbConnect(
-      RMariaDB::MariaDB(),
-      host = host,
-      user = user,
-      db = db,
-      password = pwd
-    )
+    con = db_con()
     dat = dbReadTable(con, tableName) |>
       setDT() |>
       hot_safe_table()
@@ -47,13 +41,7 @@ server_editDB_inPlace <- function(input, output, session) {
 
     bk_path = save_backup(editedData, tableName, backup_dir = backupdir)
 
-    con <- dbConnect(
-      RMariaDB::MariaDB(),
-      host = host,
-      user = user,
-      db = db,
-      password = pwd
-    )
+    con <- db_con()
 
     dbBegin(con)
 

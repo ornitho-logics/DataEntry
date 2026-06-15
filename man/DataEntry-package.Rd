@@ -6,6 +6,6 @@
 \alias{DataEntry-package}
 \title{Data entry 'in-browser' interfaces}
 \description{
-Data-entry front-end; MySQL/MariaDB backend. Flexible support for front-end data validation.
+Data-entry front-end with a MariaDB backend. Flexible support for front-end data validation.
 }
 \keyword{internal}
