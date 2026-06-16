@@ -86,9 +86,8 @@ column_comment <- function(table, excludeColumns = "pk") {
     query = paste0(
       "SELECT COLUMN_NAME `Column`, COLUMN_COMMENT description FROM 
           information_schema.COLUMNS
-              WHERE TABLE_SCHEMA = ",
-      shQuote(db),
-      " AND TABLE_NAME = ",
+              WHERE TABLE_NAME = ",
+
       shQuote(table)
     )
   )
