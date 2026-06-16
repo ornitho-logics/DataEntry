@@ -35,33 +35,14 @@ hot_safe_table <- function(x) {
 
 #' emptyFrame
 #' emptyFrame used by handsontable
-#' @param user             db user
-#' @param host             db host
-#' @param db               db name
-#' @param pwd              pwd
 #' @param table            db table
 #' @param n                n empty lines
 #' @param excludeColumns   default 'pk'
 #' @param preFilled        a named list eg. list(datetime_ = as.character(Sys.Date()))
 #' @param colorder         column order. see data.table::setcolorder
 #' @export
-#' @examples \dontrun{
-#' emptyFrame(user = "testuser", pwd = "testuser", host = "127.0.0.1", db = "tests", table = "data_entry")
-#' emptyFrame(
-#'   user = "testuser", pwd = "testuser", host = "127.0.0.1", db = "tests", table = "data_entry",
-#'   preFilled = list(datetime_ = as.character(Sys.Date()))
-#' )
-#' emptyFrame(
-#'   user = "testuser", pwd = "testuser", host = "127.0.0.1", db = "tests", table = "data_entry",
-#'   colorder = c("ID", "sex", "nest")
-#' )
-#' }
 #'
 emptyFrame <- function(
-  user,
-  host,
-  db,
-  pwd,
   table,
   n = 10,
   excludeColumns = "pk",
@@ -69,10 +50,7 @@ emptyFrame <- function(
   colorder
 ) {
   F = db_get(
-    query = paste0("SELECT * from ", db, ".", table, " where FALSE"),
-    host = host,
-    user = user,
-    pwd = pwd
+    query = paste0("SELECT * from ", table, " where FALSE")
   ) |>
     hot_safe_table()
 
@@ -98,27 +76,21 @@ emptyFrame <- function(
 
 #' column_comment
 #' db table comments
-#' @param user             db user
-#' @param host             db host
-#' @param db               db name
-#' @param pwd              pwd
 #' @param table            db table
 #' @param excludeColumns   default 'pk'
 #' @return a data.frame with two fields: Column and description
 #' @note this is just a convenience function around a "Select .. from information_schema" query.
 #' @export
-column_comment <- function(user, host, db, pwd, table, excludeColumns = "pk") {
+column_comment <- function(table, excludeColumns = "pk") {
   x = db_get(
     query = paste0(
-      "SELECT COLUMN_NAME `Column`, COLUMN_COMMENT description FROM information_schema.COLUMNS
-     WHERE TABLE_SCHEMA = ",
+      "SELECT COLUMN_NAME `Column`, COLUMN_COMMENT description FROM 
+          information_schema.COLUMNS
+              WHERE TABLE_SCHEMA = ",
       shQuote(db),
       " AND TABLE_NAME = ",
       shQuote(table)
-    ),
-    host = host,
-    user = user,
-    pwd = pwd
+    )
   )
 
   x[!x$Column %in% excludeColumns, ]
@@ -135,11 +107,9 @@ cleaner <- function(x) {
   }
 
   for (j in seq_along(x)) {
-    data.table::set(x, i = which(x[[j]] == ''), j = j, value = NA)
+    data.table::set(x, i = which(x[[j]] == ""), j = j, value = NA)
   }
-
-  # o = x[rowSums( as.matrix( is.na(x) ))  != ncol(x) ]
-  # return(o)
+  invisible(x)
 }
 
 #' @name char2vec
@@ -188,12 +158,16 @@ encourage <- function() {
 #' @param x A data.frame or data.table containing the data to be backed up.
 #' @param name The name associated to the file name
 #' @param backup_dir The directory where backups are stored.
+#' @param db database
 #'
 #' @return A character string with the full path to the backup CSV file.
 #' @export
-save_backup <- function(x, name, backup_dir) {
+save_backup <- function(
+  x,
+  name,
+  backup_dir,
   db = get("db", envir = .GlobalEnv)
-
+) {
   sub_dir = fs::path(backup_dir, db)
 
   fs::dir_create(sub_dir, recurse = TRUE)
@@ -208,6 +182,18 @@ save_backup <- function(x, name, backup_dir) {
   backup_filename
 }
 
+#' Ensure row ids
+#' Add a `rowid` column if missing.
+#' @param x A `data.table`.
+#' @return `x`, invisibly.
+#' @export
+ensure_rowid <- function(x) {
+  if (!"rowid" %in% names(x)) {
+    x[, rowid := .I]
+  }
+
+  invisible(x)
+}
 
 #' @name meltall
 #' @title melt all columns in a data.table
@@ -215,12 +201,7 @@ save_backup <- function(x, name, backup_dir) {
 #' @param na.rm  TRUE by default
 #' @export
 meltall <- function(x, na.rm = TRUE) {
-  if (!'rowid' %in% names(x)) {
-    x[, rowid := .I]
-    message(
-      "rowid is missing from x so it will be added now. If x is a subset then rowid does not reflect the row position in the non-subsetted x"
-    )
-  }
+  ensure_rowid(x)
 
   suppressWarnings(data.table::melt(
     x,
@@ -237,8 +218,7 @@ meltall <- function(x, na.rm = TRUE) {
 #' @param x  strip datetime or date
 #' @export
 #' @examples
-#' require(magrittr)
-#' x = c(Sys.Date() %>% as.character, Sys.time()%>% as.character )
+#' x = c(Sys.Date() |> as.character(), Sys.time()|> as.character() )
 #' strp_date_or_time(x)
 
 strp_date_or_time <- function(x) {

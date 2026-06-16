@@ -1,8 +1,7 @@
 #' @export
 ddmenu <- function(
-  tnam = tableName,
-  ignore_checks = TRUE,
-  tableInfoButton = TRUE
+  tnam = "Table Name",
+  ignore_checks = TRUE
 ) {
   dropdown(
     inputId = "menu",
@@ -63,19 +62,6 @@ ddmenu <- function(
       style = "minimal",
       block = TRUE,
       icon = icon("keyboard")
-    ),
-
-    br(),
-    if (tableInfoButton) {
-      actionBttn(
-        inputId = "tableInfoButton",
-        label = "Table summary",
-        style = "minimal",
-        block = TRUE,
-        icon = icon("table")
-      )
-    } else {
-      hr()
-    }
+    )
   )
 }

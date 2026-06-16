@@ -5,17 +5,9 @@
 \title{column_comment
 db table comments}
 \usage{
-column_comment(user, host, db, pwd, table, excludeColumns = "pk")
+column_comment(table, excludeColumns = "pk")
 }
 \arguments{
-\item{user}{db user}
-
-\item{host}{db host}
-
-\item{db}{db name}
-
-\item{pwd}{pwd}
-
 \item{table}{db table}
 
 \item{excludeColumns}{default 'pk'}

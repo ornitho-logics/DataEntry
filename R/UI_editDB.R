@@ -17,8 +17,8 @@
 #'
 
 dropDownNavPage_edit <- function(tableName = 'Table Name') {
-  bootstrapPage(
-    theme = NULL,
+  fillPage(
+    bootstrap = FALSE,
 
     dataentry_deps(),
 
@@ -29,7 +29,10 @@ dropDownNavPage_edit <- function(tableName = 'Table Name') {
     # MENU
 
     tags$div(
-      ddmenu(ignore_checks = FALSE, tableInfoButton = FALSE),
+      ddmenu(
+        tnam = tableName,
+        ignore_checks = FALSE
+      ),
       style = "position: absolute; top: 0; z-index: 1000 !important;"
     ),
 

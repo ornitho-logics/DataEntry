@@ -10,17 +10,12 @@
 #' @return A MariaDB connection.
 #' @export
 db_con <- function(
-	host = get("host", envir = .GlobalEnv),
-	user = get("user", envir = .GlobalEnv),
-	pwd = get("pwd", envir = .GlobalEnv),
-	db = get("db", envir = .GlobalEnv)
+	.cnf = get("cnf_path", envir = .GlobalEnv)
 ) {
 	DBI::dbConnect(
-		RMariaDB::MariaDB(),
-		host = host,
-		user = user,
-		password = pwd,
-		dbname = db,
+		drv = RMariaDB::MariaDB(),
+		default.file = .cnf,
+		group = 'DataEntry'
 	)
 }
 
@@ -46,8 +41,7 @@ db_get <- function(query, ...) {
 #' @param table  db table
 #' @export
 grand_n <- function(table) {
-	con = db_con()
-	on.exit(dbDisconnect(con))
-
-	dbGetQuery(con, paste0('select count(*) n from ', db, '.', table))$n
+	x = paste("select count(*) n from", table) |>
+		db_get()
+	x$n
 }

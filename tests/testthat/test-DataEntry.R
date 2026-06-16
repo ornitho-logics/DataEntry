@@ -1,3 +1,9 @@
+assign(
+    'cnf_path',
+    system.file("database/DataTable.cnf", package = "DataEntry"),
+    .GlobalEnv
+)
+
 context("Functions returning data.table-s")
 
 test_that("DT is returned", {
@@ -14,7 +20,6 @@ test_that("DT is returned", {
     cleaner(x)
 })
 
-
 context("UI elements and helpers")
 
 test_that("js functions", {
@@ -22,16 +27,11 @@ test_that("js functions", {
     expect_s3_class(jquery_change_by_id(1, 2), "html")
 })
 
-
 context("emptyFrame")
 
 test_that("all arguments work on emptyFrame", {
     expect_s3_class(
         emptyFrame(
-            user = "testuser",
-            pwd = "testuser",
-            host = "127.0.0.1",
-            db = "tests",
             table = "data_entry"
         ),
         "data.table"
@@ -39,10 +39,6 @@ test_that("all arguments work on emptyFrame", {
 
     expect_s3_class(
         emptyFrame(
-            user = "testuser",
-            pwd = "testuser",
-            host = "127.0.0.1",
-            db = "tests",
             table = "data_entry",
             preFilled = list(datetime_ = as.character(Sys.Date()))
         ),
@@ -51,10 +47,6 @@ test_that("all arguments work on emptyFrame", {
 
     expect_s3_class(
         emptyFrame(
-            user = "testuser",
-            pwd = "testuser",
-            host = "127.0.0.1",
-            db = "tests",
             table = "data_entry",
             colorder = c("ID", "sex", "nest")
         ),

@@ -17,6 +17,6 @@ server_newData_dropDownNavPage(input, output, session)
 Shiny server function
 }
 \note{
-user,host,db,pwd, uitable, comments, describeTable, getDataSummary are hardwired and should be defined in global.R
+uitable, comments are hardwired and should be defined in global.R
 inspectors are loaded with  \code{\link[=inspector_loader]{inspector_loader()}}
 }

@@ -1,24 +1,10 @@
 #' @name dropDownNavPage
 #' @title shiny ui based on shinyWidgets
 #' @export
-#' @examples
-#' if (interactive()) {
-#' require(DataEntry)
-#' shinyApp(
-#'  ui = dropDownNavPage(),
-#'  server = function(input, output) {
-#'      output$table <- renderRHandsontable(
-#'          rhandsontable(matrix(as.integer(NA),
-#' nrow = 30, ncol = 20) |> data.table() ) )
-#'  } )
 #'
-#'
-#' }
-#'
-
 dropDownNavPage <- function(tableName = 'Table Name') {
-  bootstrapPage(
-    theme = NULL,
+  fillPage(
+    bootstrap = FALSE,
 
     dataentry_deps(),
 

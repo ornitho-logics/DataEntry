@@ -4,12 +4,7 @@
 \alias{db_con}
 \title{Create a MariaDB connection}
 \usage{
-db_con(
-  host = get("host", envir = .GlobalEnv),
-  user = get("user", envir = .GlobalEnv),
-  pwd = get("pwd", envir = .GlobalEnv),
-  db = get("db", envir = .GlobalEnv)
-)
+db_con(.cnf = get("cnf_path", envir = .GlobalEnv))
 }
 \arguments{
 \item{host}{Database host.}

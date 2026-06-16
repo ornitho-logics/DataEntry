@@ -9,18 +9,3 @@ dropDownNavPage(tableName = "Table Name")
 \description{
 shiny ui based on shinyWidgets
 }
-\examples{
-if (interactive()) {
-require(DataEntry)
-shinyApp(
- ui = dropDownNavPage(),
- server = function(input, output) {
-     output$table <- renderRHandsontable(
-         rhandsontable(matrix(as.integer(NA),
-nrow = 30, ncol = 20) |> data.table() ) )
- } )
-
-
-}
-
-}

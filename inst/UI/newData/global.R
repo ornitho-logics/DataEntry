@@ -1,9 +1,6 @@
-# ==========================================================================
 # UI with a vertical navigation bar to enter new data
-#' shiny::runApp('./inst/UI/newData', launch.browser =  TRUE)
-# ==========================================================================
 
-# Settings
+#' shiny::runApp('./inst/UI/newData', launch.browser =  TRUE)
 
 sapply(
   c(
@@ -19,39 +16,27 @@ sapply(
   character.only = TRUE,
   quietly = TRUE
 )
+
 tags = shiny::tags
 
-package = 'DataEntry'
+options(shiny.autoreload = TRUE)
 
-# Default credentials for the local test database used by this example app.
-# Do not use these defaults for production deployments. Users should manage
-# their own database credentials outside the package.
+cnf_path = system.file("database/DataTable.cnf", package = 'DataEntry')
 
-host = "127.0.0.1"
-db = "tests"
-user = "testuser"
-pwd = "testuser"
 tableName = "data_entry"
+
 excludeColumns = c('pk', 'nov')
+
 n_empty_lines = 20
+
 authors = c('AI', 'CS', 'GS')
 
-describeTable <- function() {
-  data.frame(
-    x = 'function applied on the db table',
-    y = 'returning meaningful summaries'
-  )
-}
+comments = column_comment(tableName, excludeColumns)
 
-comments = column_comment(user, host, db, pwd, tableName, excludeColumns)
 
 # Define UI table
 uitable =
   emptyFrame(
-    user,
-    host,
-    db,
-    pwd,
     tableName,
     n = n_empty_lines,
     excludeColumns,

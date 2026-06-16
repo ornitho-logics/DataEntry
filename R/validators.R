@@ -157,12 +157,7 @@ time_order_validator <- function(
   reason = 'invalid time order or time difference larger than expected',
   time_max = 60
 ) {
-  if (!'rowid' %in% names(x)) {
-    x[, rowid := .I]
-    message(
-      "rowid is missing from x so it will be added now. If x is a subset then rowid does not reflect the row position in the non-subsetted x"
-    )
-  }
+  ensure_rowid(x)
 
   o = x[, c(time1, time2, 'rowid'), with = FALSE]
   setnames(o, c('time1', 'time2', 'rowid'))
@@ -210,12 +205,7 @@ datetime_order_validator <- function(
   reason = 'invalid datetime order or datetime difference larger than expected',
   time_max = 30
 ) {
-  if (!'rowid' %in% names(x)) {
-    x[, rowid := .I]
-    message(
-      "rowid is missing from x so it will be added now. If x is a subset then rowid does not reflect the row position in the non-subsetted x"
-    )
-  }
+  ensure_rowid(x)
 
   o = x[, c(time1, time2, 'rowid'), with = FALSE]
   setnames(o, c('time1', 'time2', 'rowid'))

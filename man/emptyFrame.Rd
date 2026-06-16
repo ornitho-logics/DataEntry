@@ -5,27 +5,9 @@
 \title{emptyFrame
 emptyFrame used by handsontable}
 \usage{
-emptyFrame(
-  user,
-  host,
-  db,
-  pwd,
-  table,
-  n = 10,
-  excludeColumns = "pk",
-  preFilled,
-  colorder
-)
+emptyFrame(table, n = 10, excludeColumns = "pk", preFilled, colorder)
 }
 \arguments{
-\item{user}{db user}
-
-\item{host}{db host}
-
-\item{db}{db name}
-
-\item{pwd}{pwd}
-
 \item{table}{db table}
 
 \item{n}{n empty lines}
@@ -39,18 +21,4 @@ emptyFrame(
 \description{
 emptyFrame
 emptyFrame used by handsontable
-}
-\examples{
-\dontrun{
-emptyFrame(user = "testuser", pwd = "testuser", host = "127.0.0.1", db = "tests", table = "data_entry")
-emptyFrame(
-  user = "testuser", pwd = "testuser", host = "127.0.0.1", db = "tests", table = "data_entry",
-  preFilled = list(datetime_ = as.character(Sys.Date()))
-)
-emptyFrame(
-  user = "testuser", pwd = "testuser", host = "127.0.0.1", db = "tests", table = "data_entry",
-  colorder = c("ID", "sex", "nest")
-)
-}
-
 }

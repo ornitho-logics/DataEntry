@@ -5,27 +5,18 @@
 #' @param session   Shiny server
 #'
 #' @export
-#' @note user,host,db,pwd, uitable, comments, describeTable, getDataSummary are hardwired and should be defined in global.R
+#' @note uitable, comments are hardwired and should be defined in global.R
 #'       inspectors are loaded with  [inspector_loader()]
 #'
 server_newData_dropDownNavPage <- function(input, output, session) {
   # Settings
   # Is no-validation column present in table ?
-  con = dbConnect(
-    RMariaDB::MariaDB(),
-    host = host,
-    user = user,
-    db = db,
-    password = pwd
-  )
-  hasnov = dbGetQuery(
-    con,
-    glue::glue("SHOW COLUMNS FROM {tableName} LIKE 'nov';")
-  ) |>
-    nrow() >
-    0
 
-  dbDisconnect(con)
+  hasnov =
+    glue::glue("SHOW COLUMNS FROM {tableName} LIKE 'nov';") |>
+      db_get() |>
+      nrow() >
+      0
 
   observeEvent(input$refresh, {
     # defined below
@@ -95,13 +86,7 @@ server_newData_dropDownNavPage <- function(input, output, session) {
         x[char2vec(cc$rowid), nov := 1L]
       }
 
-      con = dbConnect(
-        RMariaDB::MariaDB(),
-        host = host,
-        user = user,
-        db = db,
-        password = pwd
-      )
+      con = db_con()
       saved_set = dbWriteTable(
         con,
         tableName,
@@ -109,7 +94,7 @@ server_newData_dropDownNavPage <- function(input, output, session) {
         append = TRUE,
         row.names = FALSE
       )
-      dbDisconnect(con)
+      on.exit(DBI::dbDisconnect(con), add = TRUE)
 
       if (saved_set) {
         shinyjs::disable("saveButton")
@@ -215,29 +200,6 @@ server_newData_dropDownNavPage <- function(input, output, session) {
     ))
   })
 
-  # Show data SUMMARY
-  observeEvent(input$tableInfoButton, {
-    x = describeTable()
-
-    showModal(
-      modalDialog(
-        tableHTML(
-          x,
-          rownames = FALSE,
-          collapse = "separate_shiny",
-          escape = FALSE
-        ) |>
-          add_css_table(css = list("font-size", "1.2vw")) |>
-          add_theme('rshiny-blue'),
-
-        title = "Data summary:",
-        easyClose = TRUE,
-        footer = NULL,
-        size = 'l'
-      )
-    )
-  })
-
   # Show CHEATSHEET
   observeEvent(input$cheatsheetButton, {
     showModal(modalDialog(
@@ -249,7 +211,11 @@ server_newData_dropDownNavPage <- function(input, output, session) {
     ))
   })
 
-  # observe( on.exit( assign('input', reactiveValuesToList(input) , envir = .GlobalEnv)) )
+  # observe(on.exit(assign(
+  #   'input',
+  #   reactiveValuesToList(input),
+  #   envir = .GlobalEnv
+  # )))
 
   session$allowReconnect(TRUE)
 }

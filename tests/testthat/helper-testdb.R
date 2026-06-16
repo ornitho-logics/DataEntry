@@ -1,5 +1,0 @@
-host = "127.0.0.1"
-db = "tests"
-user = "testuser"
-pwd = "testuser"
-table = "data_entry"
