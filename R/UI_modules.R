@@ -5,7 +5,7 @@ ddmenu <- function(
 ) {
   dropdown(
     inputId = "menu",
-
+    style = 'minimal',
     circle = FALSE,
     right = FALSE,
     status = "danger",
