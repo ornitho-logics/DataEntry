@@ -24,7 +24,7 @@ server_edit_table <- function(input, output, session) {
       hot_rows(fixedRowsTop = 1)
   })
 
-  validation_panel = server_validation_panel(input, output, Save)
+  validation_panel = validation_panel(input, output, Save)
 
   observeEvent(input$saveButton, {
     x = Save()

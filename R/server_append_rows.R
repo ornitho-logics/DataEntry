@@ -34,7 +34,7 @@ server_append_rows <- function(input, output, session) {
     )
   })
 
-  validation_panel = server_validation_panel(input, output, Save)
+  validation_panel = validation_panel(input, output, Save)
 
   observeEvent(input$saveButton, {
     x = Save()
@@ -89,11 +89,11 @@ server_append_rows <- function(input, output, session) {
       glue("   <h4> {praise()} </h4>    ")
     }
 
-    toastr_success(
-      title = "",
-      message = msg,
-      timeOut = 20000,
-      position = "top-center"
+    showNotification(
+      ui = HTML(msg),
+      type = "message",
+      duration = 20,
+      closeButton = TRUE
     )
 
     msgau = glue(

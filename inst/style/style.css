@@ -181,7 +181,6 @@ body {
 }
 
 
-
 #refresh {
   background: var(--de-indigo) !important;
   color: #ffffff !important;
@@ -195,6 +194,7 @@ body {
 
 #cheatsheetButton {
   color: var(--de-indigo) !important;
+  font-size: 1em;
 }
 #cheatsheetButton:hover,
 #cheatsheetButton:focus {
@@ -301,11 +301,6 @@ body {
   box-shadow: var(--de-shadow);
 }
 
-#toast-container,
-.toast,
-.toastr {
-  z-index: 31000 !important;
-}
 
 /*ISSUES table */
 
@@ -331,26 +326,27 @@ body {
   gap: 8px;
   padding: 6px 10px;
   min-height: 34px;
-  background: var(--de-primary);
-  color: #ffffff;
+  background: color-mix(in srgb, var(--de-danger) 10%, transparent);
+  color: #111111;
+  border-bottom: 1px solid color-mix(in srgb, var(--de-danger) 20%, transparent);
   cursor: move;
   user-select: none;
 }
 
 .dataentry-issues-panel-header h4 {
   margin: 0;
+  color: #111111;
   font-size: 14px;
   line-height: 1.1;
   font-weight: 700;
 }
-
 .dataentry-issues-panel-close {
   padding: 0 6px;
-  min-height: 24px;
+  min-height: 30px;
   line-height: 1;
   background: transparent !important;
   border: 0 !important;
-  color: #ffffff !important;
+  color: #020000 !important;
   box-shadow: none !important;
 }
 
@@ -376,7 +372,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 1;
-  background: var(--de-primary);
+  background: var(--de-danger);
   color: #ffffff;
   font-weight: 700;
   text-align: left;
@@ -449,4 +445,53 @@ body {
   white-space: nowrap;
   overflow: visible;
   text-overflow: clip;
+}
+
+
+
+/* shiny notifications */
+
+.shiny-notification {
+  position: fixed !important;
+  top: 16px !important;
+  right: 50% !important;
+  transform: translateX(50%) !important;
+  width: min(420px, calc(100vw - 32px)) !important;
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+  border: 1px solid var(--de-border) !important;
+  background: var(--de-surface) !important;
+  box-shadow: var(--de-shadow) !important;
+  color: var(--de-text) !important;
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+  z-index: 30000 !important;
+}
+
+.shiny-notification-message {
+  border-left: 4px solid var(--de-success) !important;
+}
+
+.shiny-notification-warning {
+  border-left: 4px solid var(--de-warning) !important;
+}
+
+.shiny-notification-error {
+  border-left: 4px solid var(--de-danger) !important;
+}
+
+.shiny-notification-content {
+  padding-right: 20px !important;
+}
+
+.shiny-notification-close {
+  color: var(--de-muted) !important;
+  opacity: 1 !important;
+  top: 8px !important;
+  right: 10px !important;
+}
+
+.shiny-notification-close:hover,
+.shiny-notification-close:focus {
+  color: var(--de-text) !important;
 }

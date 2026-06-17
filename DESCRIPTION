@@ -20,7 +20,6 @@ Imports:
     rhandsontable,
     shiny,
     shinyjs,
-    shinytoastr,
     shinyWidgets,
     shinyjqui,
     stringr,

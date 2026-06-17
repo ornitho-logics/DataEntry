@@ -38,13 +38,13 @@ add_nov_flags <- function(x, issues) {
   x[, nov := 0]
 
   if (nrow(issues) > 0) {
-    x[char2vec(issues$rowid), nov := 1L]
+    x[char2vec(issues$rowid), nov := 1]
   }
 
   x
 }
 
-server_validation_panel <- function(input, output, Save) {
+validation_panel <- function(input, output, Save) {
   open = reactiveVal(FALSE)
 
   observeEvent(input$close_invalid_entries, {
@@ -65,8 +65,7 @@ server_validation_panel <- function(input, output, Save) {
     invalid_table =
       invalid_entries |>
       tableHTML(
-        rownames = FALSE,
-        collapse = "separate_shiny"
+        rownames = FALSE
       )
 
     shinyjqui::jqui_draggable(
@@ -74,7 +73,7 @@ server_validation_panel <- function(input, output, Save) {
         class = "dataentry-issues-panel",
         tags$div(
           class = "dataentry-issues-panel-header",
-          tags$h4("Invalid entries"),
+          tags$h4("Invalid entries:"),
           actionButton(
             inputId = "close_invalid_entries",
             label = NULL,
@@ -100,13 +99,19 @@ server_validation_panel <- function(input, output, Save) {
   )
 }
 
-
 validate_before_save <- function(input, x, validation_panel) {
   issues = validation_issues(x)
   ignore_validators = isTRUE(input$ignore_checks)
 
   if (nrow(issues) > 0 && !ignore_validators) {
     validation_panel$open(TRUE)
+
+    showNotification(
+      ui = "Invalid entries. Nothing was saved.",
+      type = "warning",
+      duration = 5,
+      closeButton = TRUE
+    )
 
     return(list(
       ok = FALSE,

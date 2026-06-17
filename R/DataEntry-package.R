@@ -13,9 +13,9 @@
 #' @importFrom RMariaDB MariaDB
 #' @importFrom rhandsontable hot_col hot_cols hot_rows hot_to_r rHandsontableOutput renderRHandsontable rhandsontable
 #' @importFrom shiny actionButton bootstrapPage br eventReactive hr icon
-#' @importFrom shiny includeMarkdown insertUI modalDialog observeEvent reactiveVal removeUI renderUI req showModal uiOutput
+#' @importFrom shiny includeMarkdown insertUI modalDialog observeEvent reactiveVal removeUI renderUI
+#' @importFrom shiny req showModal uiOutput showNotification
 #' @importFrom shinyjs addClass disable runjs useShinyjs
-#' @importFrom shinytoastr toastr_success useToastr
 #' @importFrom shinyWidgets actionBttn dropdown switchInput
 #' @importFrom shinyjqui jqui_draggable
 #' @importFrom stringr str_detect str_squish str_trunc

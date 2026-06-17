@@ -10,8 +10,6 @@
       tnam = table_name
     ),
 
-    useToastr(),
-
     shinyjs::useShinyjs(),
 
     js_insertMySQLTimeStamp(),
