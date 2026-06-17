@@ -23,3 +23,11 @@ CREATE TABLE data_entry (
     pk              INT(10)           NOT NULL  AUTO_INCREMENT,
     PRIMARY KEY (pk)
     ) ; 
+
+
+CREATE TABLE IF NOT EXISTS  inspectors (
+  table_name varchar(128) NOT NULL PRIMARY KEY,
+  inspector  longtext NOT NULL,
+  comments text NULL,
+  updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
