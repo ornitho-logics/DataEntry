@@ -1,1 +1,1 @@
-DataEntry::server_editDB_inPlace
+server_edit_table

@@ -4,6 +4,22 @@
 #' @export
 dataentry_deps <- function() {
   htmltools::tagList(
+    htmltools::tags$head(
+      htmltools::tags$link(
+        rel = "preconnect",
+        href = "https://fonts.googleapis.com"
+      ),
+      htmltools::tags$link(
+        rel = "preconnect",
+        href = "https://fonts.gstatic.com",
+        crossorigin = NA
+      ),
+      htmltools::tags$link(
+        rel = "stylesheet",
+        href = "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      )
+    ),
+
     htmltools::htmlDependency(
       name = "dataentry-style",
       version = as.character(utils::packageVersion("DataEntry")),

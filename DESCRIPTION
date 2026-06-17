@@ -7,30 +7,27 @@ Description: Database entry interfaces based on rhandsontable.
 License: GPL (>= 2)
 Depends:
     R (>= 4.1.0),
-    data.table,
-    shiny,
-    rhandsontable,
-    RMariaDB
 Imports:
-    methods,
+    data.table,
     DBI,
-    glue,
     fs,
-    magrittr,
-    stringr,
-    knitr,
+    glue,
+    htmltools,
+    htmlwidgets,
+    jsonlite,
     praise,
+    RMariaDB,
+    rhandsontable,
+    shiny,
     shinyjs,
-    shinydashboard,
     shinytoastr,
     shinyWidgets,
+    shinyjqui,
+    stringr,
     tableHTML,
-    jsonlite,
-    htmlwidgets,
-    htmltools
+    ini,
+    utils
 Suggests:
-    devtools,
-    gtools,
     testthat,
     withr
 Roxygen: list(markdown = TRUE)    

@@ -1,5 +1,3 @@
-# tests/testthat/test-js-ui.R
-
 test_that("dataentry_deps registers expected html dependencies", {
   deps = htmltools::findDependencies(dataentry_deps())
   names = vapply(deps, `[[`, character(1), "name")
@@ -39,30 +37,20 @@ test_that("js_hot_tippy_header returns JavaScript containing tooltip lookup data
   expect_match(out, "allowHTML: true", fixed = TRUE)
 })
 
-test_that("ddmenu renders required controls with validation toggle when requested", {
+test_that("ddmenu renders required controls with validation toggle", {
   html = htmltools::renderTags(
-    ddmenu(tnam = "data_entry", ignore_checks = TRUE)
+    ddmenu(tnam = "data_entry")
   )$html
 
   expect_match(html, "data_entry", fixed = TRUE)
   expect_match(html, "saveButton", fixed = TRUE)
   expect_match(html, "ignore_checks", fixed = TRUE)
-  expect_match(html, "helpButton", fixed = TRUE)
   expect_match(html, "cheatsheetButton", fixed = TRUE)
 })
 
-test_that("ddmenu omits validation toggle when ignore_checks is FALSE", {
+test_that("ui_edit_table renders the table output and menu", {
   html = htmltools::renderTags(
-    ddmenu(tnam = "data_entry", ignore_checks = FALSE)
-  )$html
-
-  expect_match(html, "saveButton", fixed = TRUE)
-  expect_false(grepl("ignore_checks", html, fixed = TRUE))
-})
-
-test_that("dropDownNavPage_edit renders the table output and menu", {
-  html = htmltools::renderTags(
-    dropDownNavPage_edit(tableName = "data_entry")
+    ui_edit_table(table_name = "data_entry")
   )$html
 
   expect_match(html, "table", fixed = TRUE)
@@ -70,17 +58,19 @@ test_that("dropDownNavPage_edit renders the table output and menu", {
   expect_match(html, "data_entry", fixed = TRUE)
 })
 
-test_that("dropDownNavPage renders the table output and ShinyJS support UI", {
+test_that("ui_append_rows renders the table output, issues panel placeholder, and ShinyJS support UI", {
   tags = htmltools::renderTags(
-    dropDownNavPage(tableName = "data_entry")
+    ui_append_rows(table_name = "data_entry")
   )
 
   html = tags$html
 
   expect_match(html, 'id="table"', fixed = TRUE)
   expect_match(html, 'id="saveButton"', fixed = TRUE)
-  expect_match(html, 'id="ignore_checks"', fixed = TRUE)
-  expect_match(html, 'id="run_save"', fixed = TRUE)
+  expect_match(html, 'id="invalid_entries_panel"', fixed = TRUE)
+
+  expect_no_match(html, 'id="run_save"', fixed = TRUE)
+
   expect_match(html, "toISOString", fixed = TRUE)
   expect_match(html, "window.onbeforeunload", fixed = TRUE)
 })
