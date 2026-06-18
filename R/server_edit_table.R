@@ -91,22 +91,7 @@ server_edit_table <- function(input, output, session) {
     rv_data(hot_db_table(table_name))
     validation_panel$open(FALSE)
 
-    removeUI("#dataentry-save-feedback")
-
-    insertUI(
-      selector = "#saveButton",
-      where = "afterEnd",
-      ui = tags$p(
-        id = "dataentry-save-feedback",
-        class = "dataentry-save-feedback",
-        HTML(glue(
-          "Table saved!
-          <br>
-          Backup stored as <br>
-          <code>{bk_path|>basename()}</code>."
-        ))
-      )
-    )
+    updated_table_feedback(bk_path)
 
     invisible(TRUE)
   })

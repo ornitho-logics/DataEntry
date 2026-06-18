@@ -83,23 +83,7 @@ server_append_rows <- function(input, output, session) {
     disable("saveButton")
     addClass("saveButton", "dataentry-button-disabled")
 
-    msg = if (ignore_validators) {
-      "I bet you brushed off that validation for a good reason!"
-    } else {
-      glue("   <h4> {praise()} </h4>    ")
-    }
-
-    showNotification(
-      ui = HTML(msg),
-      type = "message",
-      duration = 20,
-      closeButton = TRUE
-    )
-
-    msgau = glue(
-      "You saved {nrow(x)} rows to the DB.
-      <br>"
-    )
+    appended_rows_feedback(x, ignore_validators)
 
     insertUI(
       selector = "#saveButton",
@@ -113,10 +97,6 @@ server_append_rows <- function(input, output, session) {
           color = "success",
           block = TRUE,
           icon = icon("clone")
-        ),
-        tags$p(
-          class = "dataentry-save-feedback",
-          HTML(msgau)
         )
       )
     )

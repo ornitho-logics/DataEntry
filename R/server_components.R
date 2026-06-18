@@ -204,3 +204,53 @@ hot_append_table <- function(
 
   out
 }
+
+
+# notifications
+dataentry_notif <- function(msg, type = "message", duration = 20) {
+  showNotification(
+    ui = HTML(msg),
+    type = type,
+    duration = duration,
+    closeButton = TRUE
+  )
+}
+
+
+updated_table_feedback <- function(bk_path, ...) {
+  msg = glue(
+    'Table saved!<br>
+    Backup stored as <br>
+    <code>{bk_path |> basename()}</code>.'
+  )
+
+  dataentry_notif(msg = msg, ...)
+}
+
+
+appended_rows_feedback <- function(x, ignore = TRUE, ...) {
+  msg = if (ignore) {
+    glue(
+      "
+    <h4>
+    You probably had your reasons for skipping validation!
+    Anyway, {nrow(x)} rows made it to the DB.
+    <span class='dataentry-notification-emoji'>&#128530;</span>
+    </h4>
+    "
+    )
+  } else {
+    glue(
+      "
+    <h4>
+    {praise()}
+    You saved {nrow(x)} rows to the DB.
+    <span class='dataentry-notification-emoji'>&#x2726;&#x2726;&#x2726;&#x2726;&#x2726;</span>
+    </h4>
+    
+    "
+    )
+  }
+
+  dataentry_notif(msg = msg, ...)
+}
