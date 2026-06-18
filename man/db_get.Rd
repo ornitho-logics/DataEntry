@@ -4,12 +4,14 @@
 \alias{db_get}
 \title{Run a MariaDB query and return a data.table}
 \usage{
-db_get(query, ...)
+db_get(query, ..., params = NULL)
 }
 \arguments{
 \item{query}{SQL query passed to \code{DBI::dbGetQuery()}.}
 
 \item{...}{Additional arguments passed to \code{db_con()}.}
+
+\item{params}{Optional query parameters passed to \code{DBI::dbGetQuery()}.}
 }
 \value{
 A data.table.

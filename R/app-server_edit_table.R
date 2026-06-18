@@ -6,7 +6,27 @@
 server_edit_table <- function(input, output, session) {
   hasnov = table_has_nov(table_name)
 
-  rv_data = reactiveVal(hot_db_table(table_name))
+  exclude_columns = get0(
+    "exclude_columns",
+    inherits = TRUE,
+    ifnotfound = get0(
+      "excludeColumns",
+      inherits = TRUE,
+      ifnotfound = character()
+    )
+  )
+
+  comments = column_comment(
+    table = table_name,
+    excludeColumns = exclude_columns
+  )
+
+  rv_data = reactiveVal(
+    hot_db_table(
+      table = table_name,
+      exclude_columns = exclude_columns
+    )
+  )
 
   Save <- eventReactive(input$saveButton, {
     save_from_hot(
@@ -19,12 +39,21 @@ server_edit_table <- function(input, output, session) {
   output$table <- renderRHandsontable({
     req(rv_data())
 
-    rhandsontable(rv_data(), rowHeaders = TRUE) |>
+    rhandsontable(
+      rv_data(),
+      rowHeaders = TRUE,
+      afterGetColHeader = js_hot_tippy_header(comments, "description")
+    ) |>
       hot_cols(columnSorting = FALSE, manualColumnResize = TRUE) |>
       hot_rows(fixedRowsTop = 1)
   })
 
-  validation_panel = validation_panel(input, output, Save)
+  validation_panel = validation_panel(
+    input = input,
+    output = output,
+    Save = Save,
+    table_name = table_name
+  )
 
   observeEvent(input$saveButton, {
     x = Save()
@@ -32,6 +61,7 @@ server_edit_table <- function(input, output, session) {
     validation = validate_before_save(
       input = input,
       x = x,
+      table_name = table_name,
       validation_panel = validation_panel
     )
 
@@ -88,7 +118,13 @@ server_edit_table <- function(input, output, session) {
 
     DBI::dbCommit(con)
 
-    rv_data(hot_db_table(table_name))
+    rv_data(
+      hot_db_table(
+        table = table_name,
+        exclude_columns = exclude_columns
+      )
+    )
+
     validation_panel$open(FALSE)
 
     updated_table_feedback(bk_path)

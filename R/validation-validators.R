@@ -162,7 +162,7 @@ time_order_validator <- function(
   o = x[, c(time1, time2, 'rowid'), with = FALSE]
   setnames(o, c('time1', 'time2', 'rowid'))
 
-  f = function(x) strptime(x, format = "%H:%M") |> as.POSIXct()
+  f <- function(x) strptime(x, format = "%H:%M") |> as.POSIXct()
 
   if (!inherits(o$time1, 'POSIXt')) {
     o[, dt1 := f(time1)]

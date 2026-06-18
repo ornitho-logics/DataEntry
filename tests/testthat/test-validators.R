@@ -2,7 +2,7 @@
 
 library(data.table)
 
-validator_key = function(x) {
+validator_key <- function(x) {
   paste(x$rowid, x$variable, sep = ":")
 }
 

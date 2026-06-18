@@ -1,5 +1,3 @@
-# tests/testthat/test-inspector.R
-
 library(data.table)
 
 test_that("try_validator returns valid validator output unchanged", {
@@ -48,53 +46,103 @@ test_that("evalidators combines validator outputs by variable and reason", {
   expect_equal(out[variable == "b" & reason == "missing", rowid], "2")
 })
 
-test_that("inspector.default returns a validator-shaped message", {
-  out = inspector(data.frame(a = 1))
-
-  expect_named(out, c("rowid", "variable", "reason"))
-  expect_true(is.na(out$rowid))
-  expect_true(is.na(out$variable))
-  expect_equal(out$reason, "Validators are not available for this table!")
-})
-
-test_that("inspector_loader sources inspector files into the global environment", {
-  path = tempfile(fileext = ".R")
-  writeLines(
+test_that("inspector_from_text builds an inspector function from list expression text", {
+  inspector = DataEntry:::inspector_from_text(
     paste(
-      "inspector.my_table = function(x) {",
-      "  data.frame(rowid = 1, variable = 'a', reason = 'bad')",
-      "}",
+      "list(",
+      "  data.frame(rowid = '1', variable = 'a', reason = 'bad')",
+      ")",
       sep = "\n"
-    ),
-    path
+    )
   )
 
-  on.exit(
-    {
-      if (exists("inspector.my_table", envir = .GlobalEnv)) {
-        rm("inspector.my_table", envir = .GlobalEnv)
-      }
-    },
-    add = TRUE
-  )
+  expect_type(inspector, "closure")
 
-  inspector_loader(path)
+  out =
+    inspector(data.table(a = 1)) |>
+    evalidators()
 
-  expect_true(exists("inspector.my_table", envir = .GlobalEnv))
-
-  x = data.table(a = 1)
-  class(x) = c(class(x), "my_table")
-
-  out = inspector(x)
-
-  expect_equal(out$rowid, 1)
+  expect_s3_class(out, "data.table")
+  expect_equal(nrow(out), 1L)
+  expect_equal(out$rowid, "1")
   expect_equal(out$variable, "a")
   expect_equal(out$reason, "bad")
 })
 
-test_that("inspector_loader warns but does not error on missing files", {
-  expect_warning(
-    inspector_loader("missing-inspector-file.R"),
-    "Could not source"
+test_that("inspector_from_text evaluates inspector text with x in scope", {
+  inspector = DataEntry:::inspector_from_text(
+    paste(
+      "list(",
+      "	x[, .(a)] |> is.na_validator()",
+      ")",
+      sep = "\n"
+    )
   )
+
+  x = data.table(a = c(1, NA, 3))
+
+  out =
+    inspector(x) |>
+    evalidators()
+
+  expect_equal(out$rowid, "2")
+  expect_equal(out$variable, "a")
+  expect_equal(out$reason, "mandatory")
+})
+
+test_that("inspector_loader reads inspector text from db_get", {
+  local_mocked_bindings(
+    db_get = function(query, ..., params = NULL) {
+      expect_match(query, "SELECT inspector FROM inspectors")
+      expect_equal(params, list("data_entry"))
+
+      data.table(
+        inspector = paste(
+          "list(",
+          "  data.frame(rowid = '1', variable = 'a', reason = 'bad')",
+          ")",
+          sep = "\n"
+        )
+      )
+    },
+    .package = "DataEntry"
+  )
+
+  inspector = inspector_loader(table_name = "data_entry")
+
+  expect_type(inspector, "closure")
+
+  out =
+    inspector(data.table(a = 1)) |>
+    evalidators()
+
+  expect_equal(out$rowid, "1")
+  expect_equal(out$variable, "a")
+  expect_equal(out$reason, "bad")
+})
+
+test_that("validation_issues loads db inspector and evaluates validators", {
+  local_mocked_bindings(
+    db_get = function(query, ..., params = NULL) {
+      data.table(
+        inspector = paste(
+          "list(",
+          "	x[, .(a)] |> is.na_validator()",
+          ")",
+          sep = "\n"
+        )
+      )
+    },
+    .package = "DataEntry"
+  )
+
+  x = data.table(a = c(1, NA, 3))
+
+  out = validation_issues(x, table_name = "data_entry")
+
+  expect_s3_class(out, "data.table")
+  expect_equal(nrow(out), 1L)
+  expect_equal(out$rowid, "2")
+  expect_equal(out$variable, "a")
+  expect_equal(out$reason, "mandatory")
 })

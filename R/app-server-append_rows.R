@@ -34,7 +34,12 @@ server_append_rows <- function(input, output, session) {
     )
   })
 
-  validation_panel = validation_panel(input, output, Save)
+  validation_panel = validation_panel(
+    input = input,
+    output = output,
+    Save = Save,
+    table_name = table_name
+  )
 
   observeEvent(input$saveButton, {
     x = Save()
@@ -42,6 +47,7 @@ server_append_rows <- function(input, output, session) {
     validation = validate_before_save(
       input = input,
       x = x,
+      table_name = table_name,
       validation_panel = validation_panel
     )
 
@@ -60,23 +66,13 @@ server_append_rows <- function(input, output, session) {
     con = db_con()
     on.exit(DBI::dbDisconnect(con), add = TRUE)
 
-    saved_set = tryCatch(
-      DBI::dbWriteTable(
-        con,
-        table_name,
-        x,
-        append = TRUE,
-        row.names = FALSE
-      ),
-      error = function(e) {
-        message("DataEntry append failed: ", conditionMessage(e))
-        FALSE
-      }
+    DBI::dbWriteTable(
+      con,
+      table_name,
+      x,
+      append = TRUE,
+      row.names = FALSE
     )
-
-    if (!isTRUE(saved_set)) {
-      return(invisible(FALSE))
-    }
 
     validation_panel$open(FALSE)
 

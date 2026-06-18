@@ -14,8 +14,13 @@ exclude_columns = c('pk', 'nov')
 
 n_empty_lines = 20
 
-authors = c('AI', 'CS', 'GS')
 
-prefilled = list(datetime_ = format(Sys.Date(), "%Y-%m-%d"))
+prefilled = list(
+  datetime_ = format(Sys.Date(), "%Y-%m-%d"),
+  released_time = format(Sys.time(), "%H-%M")
+)
 
-dropdowns = list(author = authors)
+dropdowns = list(
+  author = c("AI", "CS", "GS"),
+  sex = c("M", "F")
+)

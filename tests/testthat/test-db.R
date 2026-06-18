@@ -2,7 +2,7 @@
 
 library(data.table)
 
-local_dataentry_cnf = function() {
+local_dataentry_cnf <- function() {
   cnf = system.file("database/DataTable.cnf", package = "DataEntry")
   skip_if(cnf == "", "DataTable.cnf not installed with package")
   assign("cnf_path", cnf, envir = .GlobalEnv)

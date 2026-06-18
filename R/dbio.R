@@ -24,24 +24,21 @@ db_con <- function(
 #'
 #' @param query SQL query passed to `DBI::dbGetQuery()`.
 #' @param ... Additional arguments passed to `db_con()`.
+#' @param params Optional query parameters passed to `DBI::dbGetQuery()`.
 #'
 #' @return A data.table.
 #' @export
-db_get <- function(query, ...) {
+db_get <- function(query, ..., params = NULL) {
 	con = db_con(...)
 
 	on.exit(DBI::dbDisconnect(con))
 
-	DBI::dbGetQuery(con, query) |>
-		data.table::as.data.table()
-}
+	if (is.null(params)) {
+		x = DBI::dbGetQuery(con, query)
+	} else {
+		x = DBI::dbGetQuery(con, query, params = params)
+	}
 
-#' grand_n
-#' N rows in a db table
-#' @param table  db table
-#' @export
-grand_n <- function(table) {
-	x = paste("select count(*) n from", table) |>
-		db_get()
-	x$n
+	x |>
+		data.table::as.data.table()
 }
