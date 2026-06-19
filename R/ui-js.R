@@ -1,7 +1,4 @@
-#' @name js_insertMySQLTimeStamp
-#' @title translate two forward slashes to a Mysql timestamp
-#' @note used inside shiny apps. See http://keycode.info/
-#' @export
+# translate two forward slashes to a Mysql timestamp (http://keycode.info/)
 js_insertMySQLTimeStamp <- function() {
   HTML(
     "
@@ -20,13 +17,8 @@ js_insertMySQLTimeStamp <- function() {
   )
 }
 
-
-#' @name js_before_unload
-#' @title prevent page exit
-#' @param msg   msg
-#' @note used inside shiny apps
-#' @export
-js_before_unload <- function(msg = "Are you sure you want to exit the page?") {
+# prevent page exit
+js_before_unload <- function(msg = "Are you done data entry?") {
   HTML(
     paste0(
       '
@@ -42,40 +34,9 @@ js_before_unload <- function(msg = "Are you sure you want to exit the page?") {
   )
 }
 
-
-#' @name jquery_change_by_id
-#' @title find and replace given `div` id.
-#' @param divid   div id
-#' @param newtext new text entry
-#' @note used inside shiny apps
-#' @export
-jquery_change_by_id <- function(divid, newtext) {
-  # $("#TABLE_NAME").css("color", "red");
-
-  x <- (paste0(
-    '<script>
-  $(document).ready(function() {
-  $("#',
-    divid,
-    '").text("',
-    newtext,
-    '");
-  });
-  </script>'
-  ))
-
-  HTML(x)
-}
-
-
-#' @name js_hot_tippy_header
-#' @title add tooltips to a handsontable
-#' @param x   A data frame with two columns, one colum containing the fields of the table
-#'            and one column containing the description of the fields.
-#' @param tippy_column   Character vector. the name of the column in x containing the description of the columns.
-#' @note used within rhandsontable: e.g. rhandsontable(afterGetColHeader = js_hot_tippy_header(comments, "description"))
-#' @seealso [DataEntry::column_comment()]
-#' @export
+# add tooltips to a handsontable
+# works on a data frame with two columns, one colum containing the fields of the table
+# and one column containing the description of the fields.
 js_hot_tippy_header <- function(x, tippy_column) {
   x <- cbind(loc = glue::glue("[,{1:nrow(x)}]"), x)
   jj <- jsonlite::toJSON(x, auto_unbox = TRUE)
@@ -96,4 +57,9 @@ js_hot_tippy_header <- function(x, tippy_column) {
   )
 
   htmlwidgets::JS(js_code)
+}
+
+
+js_hot_code_cell_renderer <- function() {
+  htmlwidgets::JS("DataEntry.codeCellRenderer")
 }

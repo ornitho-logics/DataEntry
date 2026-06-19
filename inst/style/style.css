@@ -447,10 +447,8 @@ body {
   text-overflow: clip;
 }
 
-
-
 /* shiny notifications */
-/* shiny notifications */
+
 
 .shiny-notification {
   position: fixed !important;
@@ -515,4 +513,51 @@ body {
   font-size: 2rem;
   line-height: 0.8;
   vertical-align: -0.2em;
+}
+
+
+/* inspector table */
+
+.handsontable td.dataentry-code-td {
+  padding: 0 !important;
+  white-space: normal !important;
+  overflow: hidden !important;
+  vertical-align: top !important;
+}
+
+.dataentry-code-cell {
+  width: 100%;
+  max-width: none;
+  height: var(--de-code-cell-height, 150px);
+  max-height: var(--de-code-cell-height, 150px);
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--de-border);
+  border-radius: 8px;
+  background: #fbfaf7;
+}
+
+.dataentry-code-cell-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 3px 6px;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--de-border);
+  background: var(--de-primary-soft);
+}
+
+.dataentry-code-cell-code {
+  height: var(--de-code-body-height, 122px);
+  max-height: var(--de-code-body-height, 122px);
+  margin: 0;
+  padding: 6px 8px;
+  box-sizing: border-box;
+  overflow: auto;
+  white-space: pre;
+  color: var(--de-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.25;
 }

@@ -1,13 +1,14 @@
 
-CREATE DATABASE IF NOT EXISTS tests;
+CREATE DATABASE IF NOT EXISTS data_entry_tests;
 
-CREATE USER IF NOT EXISTS 'testuser'@'127.0.0.1' IDENTIFIED BY 'testuser';
+CREATE USER IF NOT EXISTS 'data_entry_user'@'127.0.0.1' IDENTIFIED BY 'data_entry_pwd';
 GRANT ALTER, CREATE, CREATE VIEW, DELETE, DROP, INDEX, INSERT, SELECT, SHOW VIEW, TRIGGER, UPDATE
-ON tests.* TO 'testuser'@'127.0.0.1';
+ON data_entry_tests.* TO 'data_entry_user'@'127.0.0.1';
 
 
+USE data_entry_tests;
 
-USE tests;
+
 DROP TABLE IF EXISTS data_entry; 
 CREATE TABLE data_entry (
     author          VARCHAR(2)        NULL  DEFAULT NULL COMMENT 'author initials',
@@ -25,9 +26,46 @@ CREATE TABLE data_entry (
     ) ; 
 
 
-CREATE TABLE IF NOT EXISTS  inspectors (
-  table_name varchar(128) NOT NULL PRIMARY KEY,
-  inspector  longtext NOT NULL,
-  comments text NULL,
+DROP TABLE IF EXISTS inspectors; 
+
+CREATE TABLE IF NOT EXISTS inspectors (
+  table_name varchar(128) NOT NULL PRIMARY KEY
+    COMMENT '<strong>Inspected table</strong><br>Name of the database table this inspector applies to. This value is used by <code>inspector_loader(table_name)</code> to find the validation logic for that table.',
+
+  inspector longtext NOT NULL
+    COMMENT '<strong>Inspector source code</strong><br>R code stored as text. The text is parsed as a single R expression and evaluated with <code>x</code> in scope, where <code>x</code> is the data.table being validated before saving.<br><br>Usually this should be a <code>list(...)</code> of validator calls, for example:<br><code>list(x[, .(field)] |> is.na_validator())</code><br><br>The result is later collected with <code>evalidators()</code>, so each validator should return validation issues with row, variable, and reason information.',
+
+  comments text NULL
+    COMMENT '<strong>Inspector notes</strong><br>Optional human-readable notes about this inspector',
+
   updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    
 );
+
+
+INSERT INTO inspectors (table_name, inspector, comments)
+VALUES ('data_entry', '
+list(
+  x[, .(author, datetime_, ID)] |>
+    is.na_validator(),
+  x[recapture == 0, .(sex, measure)] |>
+    is.na_validator("Mandatory at first capture"),
+  x[, .(datetime_)] |>
+    POSIXct_validator(),
+
+  x[, .(released_time)] |>
+    hhmm_validator(),
+  x[, .(sex)] |>
+    is.element_validator(
+      v = data.table(
+        variable = "sex",
+        set = list(c("M", "F"))
+      )
+    ),
+  x[, .(measure)] |>
+    interval_validator(
+      v = data.table(variable = "measure", lq = 10, uq = 20),
+      "Meeasurement out of typical range"
+    )
+)
+', 'any notes');

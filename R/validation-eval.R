@@ -1,3 +1,23 @@
+inspector_loader <- function(table_name, ...) {
+  db_get(
+    "SELECT inspector FROM inspectors WHERE table_name = ? LIMIT 1",
+    ...,
+    params = list(table_name)
+  )[,
+    inspector_from_text(inspector[[1]])
+  ]
+}
+
+
+inspector_from_text <- function(inspector) {
+  expr = parse(text = inspector)[[1]]
+
+  function(x, ...) {
+    eval(expr)
+  }
+}
+
+
 try_validator <- function(..., nam = "") {
   ev = try(..., silent = TRUE)
 
@@ -37,9 +57,7 @@ evalidators <- function(L) {
     o <- data.frame(
       rowid = NA,
       variable = NA,
-      reason = glue(
-        "Oops! validators need validation, Error: {dQuote( str_squish(o))}"
-      )
+      reason = "Inspector validation failed. Open the inspectors table and check the inspector definition."
     )
   }
 

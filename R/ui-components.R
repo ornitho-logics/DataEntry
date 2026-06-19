@@ -67,14 +67,6 @@ dataentry_deps <- function() {
     ),
 
     htmltools::htmlDependency(
-      name = "dataentry-style",
-      version = as.character(utils::packageVersion("DataEntry")),
-      src = c(file = "style"),
-      stylesheet = "style.css",
-      package = "DataEntry"
-    ),
-
-    htmltools::htmlDependency(
       name = "popper",
       version = "2.11.8",
       src = c(file = "JS"),
@@ -88,9 +80,26 @@ dataentry_deps <- function() {
       src = c(file = "JS"),
       script = "tippy.js",
       package = "DataEntry"
+    ),
+
+    htmltools::htmlDependency(
+      name = "dataentry-style",
+      version = as.character(packageVersion("DataEntry")),
+      src = c(file = "style"),
+      stylesheet = "style.css",
+      package = "DataEntry"
+    ),
+
+    htmltools::htmlDependency(
+      name = "dataentry-code-cell-renderer",
+      version = as.character(packageVersion("DataEntry")),
+      src = c(file = "JS"),
+      script = "code-cell-renderer.js",
+      package = "DataEntry"
     )
   )
 }
+
 
 # notifications
 dataentry_notif <- function(msg, type = "message", duration = 20) {
@@ -169,7 +178,7 @@ table_has_nov <- function(table) {
 }
 
 
-column_comment <- function(table, excludeColumns = "pk") {
+column_comment <- function(table, exclude_columns = "pk") {
   x = db_get(
     query = paste0(
       "SELECT COLUMN_NAME `Column`, COLUMN_COMMENT description FROM 
@@ -180,5 +189,5 @@ column_comment <- function(table, excludeColumns = "pk") {
     )
   )
 
-  x[!x$Column %in% excludeColumns, ]
+  x[!x$Column %in% exclude_columns, ]
 }

@@ -1,28 +1,31 @@
 #' server_edit_table
 #'
 #' @export
-#' @note uitable, comments, backupdir are hardwired and should be defined in global.R
+#' @note see global.R in inst/UI/editData for required variables to set.
 #'
 server_edit_table <- function(input, output, session) {
-  hasnov = table_has_nov(table_name)
+  table_name = app_global("table_name")
+  backupdir = app_global("backupdir", tempdir())
 
-  exclude_columns = get0(
-    "exclude_columns",
-    inherits = TRUE,
-    ifnotfound = get0(
-      "excludeColumns",
-      inherits = TRUE,
-      ifnotfound = character()
-    )
-  )
+  exclude_columns = app_global("exclude_columns", character())
+
+  n_empty_lines = app_global("n_empty_lines", 5) |> as.integer()
+
+  code_column = app_global("code_column", NULL)
+  code_column_width = app_global("code_column_width", 760) |> as.integer()
+  code_row_height = app_global("code_row_height", 165) |> as.integer()
+  fixed_rows_top = app_global("fixed_rows_top", 0) |> as.integer()
+
+  hasnov = table_has_nov(table_name)
 
   comments = column_comment(
     table = table_name,
-    excludeColumns = exclude_columns
+    exclude_columns = exclude_columns
   )
 
   rv_data = reactiveVal(
     hot_db_table(
+      n_empty = n_empty_lines,
       table = table_name,
       exclude_columns = exclude_columns
     )
@@ -39,13 +42,47 @@ server_edit_table <- function(input, output, session) {
   output$table <- renderRHandsontable({
     req(rv_data())
 
-    rhandsontable(
-      rv_data(),
-      rowHeaders = TRUE,
-      afterGetColHeader = js_hot_tippy_header(comments, "description")
-    ) |>
-      hot_cols(columnSorting = FALSE, manualColumnResize = TRUE) |>
-      hot_rows(fixedRowsTop = 1)
+    x = rv_data()
+
+    has_code_column =
+      is.character(code_column) &&
+      length(code_column) == 1 &&
+      code_column %in% names(x)
+
+    out =
+      rhandsontable(
+        x,
+        rowHeaders = TRUE,
+        afterGetColHeader = js_hot_tippy_header(comments, "description")
+      ) |>
+      hot_cols(
+        columnSorting = FALSE,
+        manualColumnResize = TRUE,
+        autoColumnSize = TRUE,
+        stretchH = "none"
+      )
+
+    if (has_code_column) {
+      out =
+        out |>
+        hot_rows(
+          fixedRowsTop = fixed_rows_top,
+          rowHeights = code_row_height
+        ) |>
+        hot_col(
+          code_column,
+          type = "text",
+          width = code_column_width,
+          renderer = js_hot_code_cell_renderer(),
+          codeCellHeight = code_row_height
+        )
+    } else {
+      out =
+        out |>
+        hot_rows(fixedRowsTop = fixed_rows_top)
+    }
+
+    out
   })
 
   validation_panel = validation_panel(
@@ -120,6 +157,7 @@ server_edit_table <- function(input, output, session) {
 
     rv_data(
       hot_db_table(
+        n_empty = n_empty_lines,
         table = table_name,
         exclude_columns = exclude_columns
       )

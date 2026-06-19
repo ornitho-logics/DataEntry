@@ -38,7 +38,7 @@ hot_safe_table <- function(x) {
 emptyFrame <- function(
   table,
   n = 10,
-  excludeColumns = "pk",
+  exclude_columns = "pk",
   preFilled,
   colorder
 ) {
@@ -47,8 +47,8 @@ emptyFrame <- function(
   ) |>
     hot_safe_table()
 
-  if (!missing(excludeColumns)) {
-    F = F[, setdiff(names(F), excludeColumns), with = FALSE]
+  if (!missing(exclude_columns)) {
+    F = F[, setdiff(names(F), exclude_columns), with = FALSE]
   }
 
   if (!missing(colorder)) {
@@ -152,14 +152,14 @@ hot_append_table <- function(
     emptyFrame(
       table = table,
       n = n_empty,
-      excludeColumns = exclude_columns,
+      exclude_columns = exclude_columns,
       preFilled = pre_filled
     )
   } else {
     emptyFrame(
       table = table,
       n = n_empty,
-      excludeColumns = exclude_columns,
+      exclude_columns = exclude_columns,
       preFilled = pre_filled,
       colorder = colorder
     )

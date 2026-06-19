@@ -1,15 +1,21 @@
 #' server_append_rows
 #'
 #' @export
-#' @note uitable, comments are hardwired and should be defined in global.R
-#'       inspectors are loaded with [inspector_loader()]
+#' @note see global.R in inst/UI/newData for required variables to set.
 #'
 server_append_rows <- function(input, output, session) {
+  table_name = app_global("table_name")
+
+  exclude_columns = app_global("exclude_columns", character())
+  n_empty_lines = app_global("n_empty_lines", 20) |> as.integer()
+  prefilled = app_global("prefilled", list())
+  dropdowns = app_global("dropdowns", list())
+
   hasnov = table_has_nov(table_name)
 
   comments = column_comment(
     table = table_name,
-    excludeColumns = exclude_columns
+    exclude_columns = exclude_columns
   )
 
   append_table =

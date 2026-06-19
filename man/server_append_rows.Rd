@@ -10,6 +10,5 @@ server_append_rows(input, output, session)
 server_append_rows
 }
 \note{
-uitable, comments are hardwired and should be defined in global.R
-inspectors are loaded with \code{\link[=inspector_loader]{inspector_loader()}}
+see global.R in inst/UI/newData for required variables to set.
 }

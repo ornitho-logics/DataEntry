@@ -1,5 +1,5 @@
 [DataEntry]
 host=127.0.0.1
-user=testuser
-password=testuser
-database=tests
+user=data_entry_user
+password=data_entry_pwd
+database=data_entry_tests

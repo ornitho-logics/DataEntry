@@ -2,13 +2,15 @@ test_that("dataentry_deps registers expected html dependencies", {
   deps = htmltools::findDependencies(dataentry_deps())
   names = vapply(deps, `[[`, character(1), "name")
 
-  expect_setequal(names, c("dataentry-style", "popper", "tippy"))
+  expect_setequal(
+    names,
+    c("dataentry-style", "popper", "tippy", "dataentry-code-cell-renderer")
+  )
 })
 
 test_that("javascript helper functions return html fragments with expected content", {
   ts = as.character(js_insertMySQLTimeStamp())
   unload = as.character(js_before_unload("Leave?"))
-  change = as.character(jquery_change_by_id("TABLE_NAME", "data_entry"))
 
   expect_match(ts, "keyup", fixed = TRUE)
   expect_match(ts, "toISOString", fixed = TRUE)
@@ -16,9 +18,6 @@ test_that("javascript helper functions return html fragments with expected conte
 
   expect_match(unload, "window.onbeforeunload", fixed = TRUE)
   expect_match(unload, "Leave?", fixed = TRUE)
-
-  expect_match(change, "#TABLE_NAME", fixed = TRUE)
-  expect_match(change, "data_entry", fixed = TRUE)
 })
 
 test_that("js_hot_tippy_header returns JavaScript containing tooltip lookup data", {

@@ -1,8 +1,9 @@
 # UI with a vertical navigation bar to enter new data
 
+#' nn = function() {
 #' devtools::load_all(".", reset = TRUE)
 #' options(shiny.autoreload = TRUE)
-#' shiny::runApp("./inst/UI/newData", launch.browser = TRUE)
+#' shiny::runApp("./inst/UI/newData", launch.browser = TRUE) }
 
 require(DataEntry)
 
