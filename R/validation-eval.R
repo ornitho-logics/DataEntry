@@ -9,14 +9,64 @@ inspector_loader <- function(table_name, ...) {
 }
 
 
-inspector_from_text <- function(inspector) {
-  expr = parse(text = inspector)[[1]]
+inspector_env <- function(x) {
+  env = new.env(parent = asNamespace("DataEntry"))
 
-  function(x, ...) {
-    eval(expr)
+  env$x = x
+
+  env$db_con = function(...) {
+    db_con(...)
   }
+
+  env$db_get = function(query, ..., params = NULL) {
+    db_get(
+      query,
+      ...,
+      params = params
+    )
+  }
+
+  env
 }
 
+inspector_from_text <- function(inspector) {
+  expr = parse(
+    text = inspector,
+    keep.source = FALSE
+  )
+
+  if (length(expr) != 1L) {
+    stop(
+      "Inspector must contain exactly one R expression.",
+      call. = FALSE
+    )
+  }
+
+  expr = expr[[1L]]
+
+  check_inspector_expr(expr)
+
+  force(expr)
+
+  function(x, ...) {
+    unix::eval_safe(
+      eval(
+        expr,
+        envir = inspector_env(x)
+      ),
+      timeout = 5L,
+      closeAllConnections = TRUE,
+      rlimits = list(
+        as = 512 * 1024^2,
+        cpu = 5L,
+        fsize = 10 * 1024^2,
+        nproc = 16L,
+        nofile = 64L,
+        core = 0L
+      )
+    )
+  }
+}
 
 try_validator <- function(..., nam = "") {
   ev = try(..., silent = TRUE)
