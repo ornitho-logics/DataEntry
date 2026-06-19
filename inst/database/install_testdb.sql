@@ -29,7 +29,7 @@ CREATE TABLE data_entry (
 DROP TABLE IF EXISTS inspectors; 
 
 CREATE TABLE IF NOT EXISTS inspectors (
-  table_name varchar(128) NOT NULL PRIMARY KEY
+  table_name varchar(128) NOT NULL
     COMMENT '<strong>Inspected table</strong><br>Name of the database table this inspector applies to. This value is used by <code>inspector_loader(table_name)</code> to find the validation logic for that table.',
 
   inspector longtext NOT NULL
@@ -61,7 +61,14 @@ list(
         variable = "sex",
         set = list(c("M", "F"))
       )
-    ),
+    )
+)
+', 'any notes');
+
+
+INSERT INTO inspectors (table_name, inspector, comments)
+VALUES ('data_entry', '
+list(
   x[, .(measure)] |>
     interval_validator(
       v = data.table(variable = "measure", lq = 10, uq = 20),

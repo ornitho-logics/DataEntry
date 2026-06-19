@@ -25,6 +25,7 @@ Imports:
     stringr,
     tableHTML,
     ini,
+    unix,
     utils
 Suggests:
     testthat,

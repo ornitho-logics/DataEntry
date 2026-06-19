@@ -1,33 +1,23 @@
 inspector_loader <- function(table_name, ...) {
-  db_get(
-    "SELECT inspector FROM inspectors WHERE table_name = ? LIMIT 1",
+  inspectors = db_get(
+    "SELECT inspector FROM inspectors WHERE table_name = ? ORDER BY updated_at, table_name",
     ...,
     params = list(table_name)
-  )[,
-    inspector_from_text(inspector[[1]])
-  ]
-}
+  )
 
-
-inspector_env <- function(x) {
-  env = new.env(parent = asNamespace("DataEntry"))
-
-  env$x = x
-
-  env$db_con = function(...) {
-    db_con(...)
+  if (nrow(inspectors) == 0) {
+    return(function(x, ...) list())
   }
 
-  env$db_get = function(query, ..., params = NULL) {
-    db_get(
-      query,
-      ...,
-      params = params
-    )
-  }
+  inspector = paste0(
+    "c(\n",
+    paste(inspectors$inspector, collapse = ",\n"),
+    "\n)"
+  )
 
-  env
+  inspector_from_text(inspector)
 }
+
 
 inspector_from_text <- function(inspector) {
   expr = parse(
@@ -35,36 +25,25 @@ inspector_from_text <- function(inspector) {
     keep.source = FALSE
   )
 
-  if (length(expr) != 1L) {
+  if (length(expr) != 1) {
     stop(
       "Inspector must contain exactly one R expression.",
       call. = FALSE
     )
   }
 
-  expr = expr[[1L]]
-
-  check_inspector_expr(expr)
-
   force(expr)
 
   function(x, ...) {
-    unix::eval_safe(
-      eval(
-        expr,
-        envir = inspector_env(x)
-      ),
-      timeout = 5L,
-      closeAllConnections = TRUE,
-      rlimits = list(
-        as = 512 * 1024^2,
-        cpu = 5L,
-        fsize = 10 * 1024^2,
-        nproc = 16L,
-        nofile = 64L,
-        core = 0L
+    local({
+      expr = expr
+      x = x
+
+      unix::eval_safe(
+        eval(expr),
+        timeout = 10
       )
-    )
+    })
   }
 }
 

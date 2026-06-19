@@ -16,6 +16,8 @@ server_edit_table <- function(input, output, session) {
   code_row_height = app_global("code_row_height", 165) |> as.integer()
   fixed_rows_top = app_global("fixed_rows_top", 0) |> as.integer()
 
+  has_code_column = is.character(code_column)
+
   hasnov = table_has_nov(table_name)
 
   comments = column_comment(
@@ -43,11 +45,6 @@ server_edit_table <- function(input, output, session) {
     req(rv_data())
 
     x = rv_data()
-
-    has_code_column =
-      is.character(code_column) &&
-      length(code_column) == 1 &&
-      code_column %in% names(x)
 
     out =
       rhandsontable(
@@ -171,6 +168,18 @@ server_edit_table <- function(input, output, session) {
   })
 
   server_cheatsheet_modal(input)
+
+  session$onFlushed(
+    once = TRUE,
+    function() {
+      if (has_code_column) {
+        removeUI(
+          selector = "div:has(> #ignore_checks)",
+          immediate = TRUE
+        )
+      }
+    }
+  )
 
   session$allowReconnect(TRUE)
 }

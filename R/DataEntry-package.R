@@ -22,6 +22,7 @@
 #' @importFrom tableHTML tableHTML
 #' @importFrom ini read.ini
 #' @importFrom utils globalVariables packageVersion
+#' @importFrom unix eval_safe
 #'
 #' @keywords internal
 "_PACKAGE"

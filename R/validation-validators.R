@@ -359,3 +359,82 @@ is.regexp_validator <- function(x, regexp, reason = "invalid pattern") {
 
   o[, .(rowid, variable, reason)]
 }
+
+
+#' @rdname    validators
+#' Validate R code syntax
+#'
+#' @param x A data.frame or data.table containing R code.
+#' @param column Code column to validate. Defaults to the first non-`rowid`
+#'   column.
+#' @param allow_empty Whether empty strings are allowed.
+#' @param exactly_one Whether code must parse to exactly one expression.
+#' @param reason Validation reason prefix.
+#'
+#' @return A data.table with `rowid`, `variable`, and `reason`.
+#' @export
+rcode_validator <- function(
+  x,
+  column = NULL,
+  allow_empty = FALSE,
+  exactly_one = FALSE,
+  reason = "invalid R code"
+) {
+  x = data.table::as.data.table(data.table::copy(x))
+  ensure_rowid(x)
+
+  if (is.null(column)) {
+    column = setdiff(names(x), "rowid")[[1L]]
+  }
+
+  if (!column %in% names(x)) {
+    return(data.table::data.table(
+      rowid = NA_integer_,
+      variable = column,
+      reason = paste0(reason, ": missing column `", column, "`")
+    ))
+  }
+
+  check_one = function(code) {
+    if (is.na(code) || !nzchar(trimws(code))) {
+      if (isTRUE(allow_empty)) {
+        return("")
+      }
+
+      return("empty code")
+    }
+
+    parsed = tryCatch(
+      parse(text = code, keep.source = FALSE),
+      error = conditionMessage
+    )
+
+    if (is.character(parsed)) {
+      return(parsed)
+    }
+
+    if (isTRUE(exactly_one) && length(parsed) != 1L) {
+      return(sprintf(
+        "expected exactly one expression, got %s",
+        length(parsed)
+      ))
+    }
+
+    ""
+  }
+
+  issues = vapply(
+    x[[column]],
+    check_one,
+    character(1),
+    USE.NAMES = FALSE
+  )
+
+  i = nzchar(issues)
+
+  data.table::data.table(
+    rowid = x$rowid[i],
+    variable = column,
+    reason = paste(reason, issues[i], sep = ": ")
+  )
+}

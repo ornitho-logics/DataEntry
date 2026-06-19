@@ -14,7 +14,7 @@ test_that("emptyFrame builds empty handsontable data with excluded columns and p
   out = emptyFrame(
     table = "data_entry",
     n = 3,
-    excludeColumns = "pk",
+    exclude_columns = "pk",
     preFilled = list(ID = "bird-1"),
     colorder = c("ID", "datetime_", "measure")
   )
