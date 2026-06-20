@@ -4,27 +4,35 @@
 \alias{db_con}
 \title{Create a MariaDB connection}
 \usage{
-db_con(.cnf = get("cnf_path", envir = .GlobalEnv))
+db_con(.cnf = NULL, group = NULL)
 }
 \arguments{
-\item{.cnf}{Path to a MariaDB option file. Defaults to \code{cnf_path} from the
-global environment.}
+\item{.cnf}{Path to a MariaDB option file.}
+
+\item{group}{Option group in \code{.cnf}.}
 }
 \value{
 A MariaDB connection.
 }
 \description{
-Creates a MariaDB connection from an option file, using the \code{DataEntry}
-option group.
+Creates a MariaDB connection from an option file.
 }
 \details{
-The example apps define \code{cnf_path} in \code{global.R} and point it to the package
-test configuration:
+The option file is searched in this order:
+\enumerate{
+\item \code{Sys.getenv("DATAENTRY_CNF")}
+\item \code{cnf_path} from the global environment
+\item \verb{~/.my.cnf}
+}
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{cnf_path = system.file("database", "DataTable.cnf", package = "DataEntry")
-}\if{html}{\out{</div>}}
+The option group is searched in this order:
+\enumerate{
+\item \code{Sys.getenv("DATAENTRY_GROUP")}
+\item \code{cnf_group} from the global environment
+\item \code{"DataEntry"}
+}
 
-The option file should contain a \verb{[DataEntry]} group with connection fields
+The option file should contain the selected group with connection fields
 understood by \code{RMariaDB::MariaDB()}, for example \code{host}, \code{user},
 \code{password}, and \code{database}.
 }

@@ -11,10 +11,8 @@ Data-entry front-end with a MariaDB backend. Flexible support for front-end data
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://mpio-be.github.io/DataEntry/}
-  \item \url{https://github.com/mpio-be/DataEntry}
   \item \url{https://ornitho-logics.github.io/DataEntry/}
-  \item Report bugs at \url{https://github.com/mpio-be/DataEntry/issues}
+  \item Report bugs at \url{https://github.com/ornitho-logics/DataEntry/issues}
 }
 
 }

@@ -3,18 +3,19 @@
 #' ee = function() {
 #' devtools::load_all(".", reset = TRUE)
 #' options(shiny.autoreload = TRUE)
-#' shiny::runApp("./inst/UI/editData", launch.browser = TRUE) }
+#' shiny::runApp("./inst/UI/editData", launch.browser = TRUE)
+#' }
 
 require(DataEntry)
 
-cnf_path = system.file("database/DataTable.cnf", package = 'DataEntry')
+cnf_path <- system.file("database/DataTable.cnf", package = 'DataEntry')
 
-table_name = "data_entry"
+table_name <- "data_entry"
 
-db = ini::read.ini(cnf_path)$DataEntry$database
+db <- ini::read.ini(cnf_path)$DataEntry$database
 
-backupdir = tempdir()
+backupdir <- tempdir()
 
-n_empty_lines = 5
+n_empty_lines <- 5
 
-excludeColumns = c('pk', 'nov')
+excludeColumns <- c('pk', 'nov')

@@ -1,11 +1,15 @@
-# tests/testthat/test-db.R
-
 library(data.table)
 
 local_dataentry_cnf <- function() {
-  cnf = system.file("database/DataTable.cnf", package = "DataEntry")
+  cnf <- system.file("database/DataTable.cnf", package = "DataEntry")
+
   skip_if(cnf == "", "DataTable.cnf not installed with package")
-  assign("cnf_path", cnf, envir = .GlobalEnv)
+
+  withr::local_envvar(
+    DATAENTRY_CNF = cnf,
+    DATAENTRY_GROUP = "DataEntry"
+  )
+
   cnf
 }
 
@@ -14,7 +18,7 @@ test_that("db_con opens a MariaDB connection from package cnf", {
 
   local_dataentry_cnf()
 
-  con = try(db_con(), silent = TRUE)
+  con <- try(db_con(), silent = TRUE)
   skip_if(inherits(con, "try-error"), "Cannot connect to MariaDB test backend")
 
   on.exit(DBI::dbDisconnect(con), add = TRUE)
@@ -28,7 +32,7 @@ test_that("db_get returns a data.table from MariaDB", {
 
   local_dataentry_cnf()
 
-  out = try(db_get("select 1 as n"), silent = TRUE)
+  out <- try(db_get("select 1 as n"), silent = TRUE)
   skip_if(inherits(out, "try-error"), "Cannot query MariaDB test backend")
 
   expect_s3_class(out, "data.table")
@@ -40,7 +44,7 @@ test_that("emptyFrame works against the configured MariaDB data_entry table", {
 
   local_dataentry_cnf()
 
-  out = try(emptyFrame(table = "data_entry"), silent = TRUE)
+  out <- try(emptyFrame(table = "data_entry"), silent = TRUE)
   skip_if(inherits(out, "try-error"), "Cannot query data_entry table")
 
   expect_s3_class(out, "data.table")
@@ -52,7 +56,7 @@ test_that("emptyFrame supports preFilled and colorder against MariaDB", {
 
   local_dataentry_cnf()
 
-  out = try(
+  out <- try(
     emptyFrame(
       table = "data_entry",
       preFilled = list(datetime_ = as.character(Sys.Date())),
