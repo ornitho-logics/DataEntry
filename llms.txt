@@ -1,0 +1,129 @@
+## DataEntry: Data Entry interfaces.
+
+The data entry backend is a `MariaDB` database so more people can enter
+data simultaneously. The frontends are UI-s (one per table) based on
+[shiny](https://cran.r-project.org/package=shiny) and
+[rhandsontable](https://cran.r-project.org/package=rhandsontable).
+
+Individual checks are done by `validators`. A collection of `validators`
+makes an `inspector`. Data is checked *before* it is saved to the DB by
+the `inspector`. Each time the `inspector` runs, the *exact* position of
+the offending cell(s) and the reasons for errors are returned.
+
+The user can bypass the data validation. However the entries saved
+without validation are flagged in the database and the user is
+encouraged to explain why the validation was ignored.
+
+This package deliberately keeps validation in the data entry layer
+rather than relying only on database constraints. In field work, unusual
+observations are not always mistakes. Hard database constraints are
+excellent for protecting structural integrity, but they can also make it
+impossible to record a real but unexpected observation at the moment it
+happens.
+
+For that reason, validation failures are shown clearly to the user
+before saving, but the user can still choose to bypass them. Bypassed
+entries are flagged in the database so they can be reviewed later. The
+goal is to make questionable data visible and traceable, not to silently
+discard or block observations that may be nooreal.
+
+## The package includes three Shiny apps:
+
+``` r
+
+
+shiny::runApp(
+  system.file("UI", "newData", package = "DataEntry"),
+  launch.browser = TRUE
+)
+
+shiny::runApp(
+  system.file("UI", "editData", package = "DataEntry"),
+  launch.browser = TRUE
+)
+
+shiny::runApp(
+  system.file("UI", "editInspector", package = "DataEntry"),
+  launch.browser = TRUE
+)
+```
+
+These apps expect the test database configured by:
+
+``` r
+
+system.file("UI", ".testdb.R", package = "DataEntry")
+```
+
+The SQL installer for the `data_entry_tests` database is available at:
+
+``` r
+
+system.file("database", "install_testdb.sql", package = "DataEntry")
+```
+
+From a shell, install it with something like:
+
+``` sh
+mariadb -u root -p < path/to/install_testdb.sql
+```
+
+The SQL creates the `data_entry_tests` database, the test user, and the
+tables used by the example apps.
+
+------------------------------------------------------------------------
+
+![newData app](reference/figures/readme-newData.png)
+
+newData app
+
+## Installation
+
+``` r
+
+
+install.packages("remotes")
+remotes::install_github("ornitho-logics/DataEntry")
+```
+
+# Package index
+
+## Apps
+
+- [`ui_append_rows()`](https://mpio-be.github.io/DataEntry/reference/dataentry_ui.md)
+  [`ui_edit_table()`](https://mpio-be.github.io/DataEntry/reference/dataentry_ui.md)
+  [`ui_edit_inspectors()`](https://mpio-be.github.io/DataEntry/reference/dataentry_ui.md)
+  : Data entry UI
+- [`server_append_rows()`](https://mpio-be.github.io/DataEntry/reference/dataentry_servers.md)
+  [`server_edit_inspectors()`](https://mpio-be.github.io/DataEntry/reference/dataentry_servers.md)
+  [`server_edit_table()`](https://mpio-be.github.io/DataEntry/reference/dataentry_servers.md)
+  : Data entry server modules
+
+## Database
+
+- [`db_con()`](https://mpio-be.github.io/DataEntry/reference/db_con.md)
+  : Create a MariaDB connection
+- [`db_get()`](https://mpio-be.github.io/DataEntry/reference/db_get.md)
+  : Run a MariaDB query and return a data.table
+
+## Validation
+
+- [`is.na_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`POSIXct_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`hhmm_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`date_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`datetime_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`datetime_validatorSS()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`time_order_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`datetime_order_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`interval_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`nchar_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`is.element_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`is.duplicate_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`is.identical_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`is.regexp_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  [`rcode_validator()`](https://mpio-be.github.io/DataEntry/reference/validators.md)
+  :
+
+       data validators 
+
