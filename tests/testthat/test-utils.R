@@ -1,16 +1,14 @@
-# tests/testthat/test-utils.R
-
 library(data.table)
 
 test_that("hot_safe_table converts date/time classes to character-safe columns", {
-  x = data.table(
+  x <- data.table(
     ts = as.POSIXct(c("2024-01-02 03:04:05", NA), tz = "UTC"),
     d = as.Date(c("2024-01-03", NA)),
     dt = as.difftime(c(30, NA), units = "mins"),
     value = c("a", "b")
   )
 
-  out = hot_safe_table(copy(x))
+  out <- hot_safe_table(copy(x))
 
   expect_type(out$ts, "character")
   expect_equal(out$ts[1], "2024-01-02 03:04:05")
@@ -25,7 +23,7 @@ test_that("hot_safe_table converts date/time classes to character-safe columns",
 })
 
 test_that("cleaner replaces string NA and empty strings in place", {
-  x = data.table(
+  x <- data.table(
     a = c("NA", "", "x"),
     b = c("", "NA", "y")
   )
@@ -41,12 +39,12 @@ test_that("cleaner replaces string NA and empty strings in place", {
 })
 
 test_that("meltall returns long data with row ids", {
-  x = data.table(
+  x <- data.table(
     a = c(1, NA),
     b = c("x", "y")
   )
 
-  out = meltall(x, na.rm = FALSE)
+  out <- meltall(x, na.rm = FALSE)
 
   expect_s3_class(out, "data.table")
   expect_named(out, c("rowid", "variable", "value"))
@@ -60,7 +58,7 @@ test_that("char2vec parses comma-separated row ids", {
 })
 
 test_that("strp_date_or_time parses date and datetime strings", {
-  out = strp_date_or_time(c(
+  out <- strp_date_or_time(c(
     "2024-01-03 08:15",
     "2024-01-03",
     "not-a-date"
@@ -73,9 +71,9 @@ test_that("strp_date_or_time parses date and datetime strings", {
 })
 
 test_that("save_backup writes a timestamped CSV under the db subdirectory", {
-  backup_dir = withr::local_tempdir()
+  backup_dir <- withr::local_tempdir()
 
-  path = save_backup(
+  path <- save_backup(
     x = data.table(a = 1:2, b = c("x", "y")),
     name = "data_entry",
     backup_dir = backup_dir,
@@ -94,8 +92,27 @@ test_that("save_backup writes a timestamped CSV under the db subdirectory", {
     "^backup_testdb_data_entry_[0-9]{8}_[0-9]{6}\\.csv$"
   )
 
-  out = fread(path)
+  out <- fread(path)
 
   expect_equal(out$a, 1:2)
   expect_equal(out$b, c("x", "y"))
+})
+
+test_that("hot_safe_table preserves zero-row hms time columns as character", {
+  hms_col <- structure(
+    numeric(),
+    units = "secs",
+    class = c("hms", "difftime")
+  )
+
+  x <- data.table(
+    cap_start = hms_col,
+    caught = hms_col
+  )
+
+  out <- hot_safe_table(copy(x))
+
+  expect_equal(nrow(out), 0L)
+  expect_type(out$cap_start, "character")
+  expect_type(out$caught, "character")
 })

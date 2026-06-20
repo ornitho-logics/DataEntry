@@ -5,31 +5,37 @@ hot_safe_table <- function(x) {
     vapply(x, inherits, logical(1), what = "POSIXt")
   ]
 
-  if (length(posix_cols)) {
-    x[,
-      (posix_cols) := lapply(.SD, function(z) {
-        out <- format(z, "%Y-%m-%d %H:%M:%S")
-        out[is.na(z)] <- NA_character_
-        out
-      }),
-      .SDcols = posix_cols
-    ]
+  for (col in posix_cols) {
+    z <- x[[col]]
+    out <- format(z, "%Y-%m-%d %H:%M:%S")
+    out[is.na(z)] <- NA_character_
+    set(x, j = col, value = out)
   }
 
   date_cols <- names(x)[
     vapply(x, inherits, logical(1), what = "Date")
   ]
 
-  if (length(date_cols)) {
-    x[, (date_cols) := lapply(.SD, as.character), .SDcols = date_cols]
+  for (col in date_cols) {
+    set(x, j = col, value = as.character(x[[col]]))
   }
 
   difftime_cols <- names(x)[
     vapply(x, inherits, logical(1), what = "difftime")
   ]
 
-  if (length(difftime_cols)) {
-    x[, (difftime_cols) := lapply(.SD, as.character), .SDcols = difftime_cols]
+  for (col in difftime_cols) {
+    z <- x[[col]]
+
+    out <- if (length(z) == 0) {
+      character()
+    } else {
+      as.character(z)
+    }
+
+    out[is.na(z)] <- NA_character_
+
+    set(x, j = col, value = out)
   }
 
   x
