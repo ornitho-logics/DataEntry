@@ -1,1 +1,1 @@
-server_edit_table
+server_edit_inspectors

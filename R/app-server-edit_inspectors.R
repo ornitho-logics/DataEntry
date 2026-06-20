@@ -1,18 +1,28 @@
-#' server_edit_table
+#' server_edit_inspectors
 #'
 #' @export
-#' @note see global.R in inst/UI/editData for required variables to set.
+#' @note see global.R in inst/UI/editInspector for required variables to set.
 #'
-server_edit_table <- function(input, output, session) {
-  table_name <- app_global("table_name")
+server_edit_inspectors <- function(input, output, session) {
+  table_name <- app_global("table_name", "inspectors")
   backupdir <- app_global("backupdir", tempdir())
 
   exclude_columns <- app_global("exclude_columns", character())
 
-  n_empty_lines <- app_global("n_empty_lines", 5) |> as.integer()
+  n_empty_lines <- app_global("n_empty_lines", 2) |> as.integer()
+  code_column <- app_global("code_column", "inspector")
+  code_column_width <- app_global("code_column_width", 760) |> as.integer()
+  code_row_height <- app_global("code_row_height", 100) |> as.integer()
   fixed_rows_top <- app_global("fixed_rows_top", 0) |> as.integer()
 
-  hasnov <- table_has_nov(table_name)
+  inspector_issues <- function(x) {
+    list(
+      x[, c("table_name", code_column), with = FALSE] |> is.na_validator(),
+      x[, code_column, with = FALSE] |>
+        rcode_validator(column = code_column)
+    ) |>
+      evalidators()
+  }
 
   comments <- column_comment(
     table = table_name,
@@ -38,11 +48,8 @@ server_edit_table <- function(input, output, session) {
   output$table <- renderRHandsontable({
     req(rv_data())
 
-    x <- rv_data()
-
-    out <-
+    rv_data() |>
       rhandsontable(
-        x,
         rowHeaders = TRUE,
         afterGetColHeader = js_hot_tippy_header(comments, "description")
       ) |>
@@ -52,16 +59,24 @@ server_edit_table <- function(input, output, session) {
         autoColumnSize = TRUE,
         stretchH = "none"
       ) |>
-      hot_rows(fixedRowsTop = fixed_rows_top)
-
-    out
+      hot_rows(
+        fixedRowsTop = fixed_rows_top,
+        rowHeights = code_row_height
+      ) |>
+      hot_col(
+        code_column,
+        type = "text",
+        width = code_column_width,
+        renderer = js_hot_code_cell_renderer(),
+        codeCellHeight = code_row_height
+      )
   })
 
   validation_panel <- validation_panel(
     input = input,
     output = output,
     Save = Save,
-    table_name = table_name
+    issues = inspector_issues
   )
 
   observeEvent(input$saveButton, {
@@ -70,23 +85,17 @@ server_edit_table <- function(input, output, session) {
     validation <- validate_before_save(
       input = input,
       x = x,
-      table_name = table_name,
-      validation_panel = validation_panel
+      validation_panel = validation_panel,
+      issues = inspector_issues,
+      allow_ignore = FALSE
     )
 
     if (!validation$ok) {
       return(invisible(NULL))
     }
 
-    x <- validation$x
-    cc <- validation$issues
-
-    if (hasnov) {
-      x <- add_nov_flags(x, cc)
-    }
-
     bk_path <- replace_db_table(
-      x,
+      validation$x,
       table_name,
       backupdir
     )

@@ -1,1 +1,1 @@
-ui_edit_table(table_name = table_name)
+ui_edit_inspectors(table_name = table_name)

@@ -2,6 +2,7 @@
 
 Misc
 * <kbd>//</kbd>         – Enter the datetime as `yyyy-mm-dd hh:mm`
+* <kbd>Ctr-S</kbd>      – Open the `Save` menu.
 
 
 Navigation

@@ -1,22 +1,22 @@
 #HOT-data
 
 hot_safe_table <- function(x) {
-  posix_cols = names(x)[
+  posix_cols <- names(x)[
     vapply(x, inherits, logical(1), what = "POSIXt")
   ]
 
   if (length(posix_cols)) {
     x[,
       (posix_cols) := lapply(.SD, function(z) {
-        out = format(z, "%Y-%m-%d %H:%M:%S")
-        out[is.na(z)] = NA_character_
+        out <- format(z, "%Y-%m-%d %H:%M:%S")
+        out[is.na(z)] <- NA_character_
         out
       }),
       .SDcols = posix_cols
     ]
   }
 
-  date_cols = names(x)[
+  date_cols <- names(x)[
     vapply(x, inherits, logical(1), what = "Date")
   ]
 
@@ -24,7 +24,7 @@ hot_safe_table <- function(x) {
     x[, (date_cols) := lapply(.SD, as.character), .SDcols = date_cols]
   }
 
-  difftime_cols = names(x)[
+  difftime_cols <- names(x)[
     vapply(x, inherits, logical(1), what = "difftime")
   ]
 
@@ -42,20 +42,22 @@ emptyFrame <- function(
   preFilled,
   colorder
 ) {
-  F = db_get(
+  F <- db_get(
     query = paste0("SELECT * from ", table, " where FALSE")
   ) |>
     hot_safe_table()
 
   if (!missing(exclude_columns)) {
-    F = F[, setdiff(names(F), exclude_columns), with = FALSE]
+    F <- F[, setdiff(names(F), exclude_columns), with = FALSE]
   }
 
   if (!missing(colorder)) {
     setcolorder(F, colorder)
   }
 
-  F = rbind(F, data.table(tempcol = rep(NA, n)), fill = TRUE)[, tempcol := NULL]
+  F <- rbind(F, data.table(tempcol = rep(NA, n)), fill = TRUE)[,
+    tempcol := NULL
+  ]
 
   if (!missing(preFilled)) {
     for (i in 1:length(preFilled)) {
@@ -67,18 +69,18 @@ emptyFrame <- function(
 }
 
 hot_db_table <- function(table, n_empty = 10, exclude_columns = character()) {
-  con = db_con()
+  con <- db_con()
   on.exit(DBI::dbDisconnect(con), add = TRUE)
 
-  dat =
+  dat <-
     DBI::dbReadTable(con, table) |>
     setDT() |>
     hot_safe_table()
 
-  dat = dat[, setdiff(names(dat), exclude_columns), with = FALSE]
+  dat <- dat[, setdiff(names(dat), exclude_columns), with = FALSE]
 
-  empty_rows = as.data.frame(matrix(NA, ncol = ncol(dat), nrow = n_empty))
-  names(empty_rows) = names(dat)
+  empty_rows <- as.data.frame(matrix(NA, ncol = ncol(dat), nrow = n_empty))
+  names(empty_rows) <- names(dat)
 
   rbind(dat, empty_rows)
 }
@@ -90,11 +92,11 @@ drop_empty_hot_rows <- function(x) {
 }
 
 save_from_hot <- function(input, table, drop_empty = FALSE) {
-  o = hot_to_r(input$table) |>
+  o <- hot_to_r(input$table) |>
     data.table()
 
   if (drop_empty) {
-    o = drop_empty_hot_rows(o)
+    o <- drop_empty_hot_rows(o)
   }
 
   cleaner(o)
@@ -109,11 +111,11 @@ drop_empty_hot_rows <- function(x) {
 
 
 save_from_hot <- function(input, table, drop_empty = FALSE) {
-  o = hot_to_r(input$table) |>
+  o <- hot_to_r(input$table) |>
     data.table()
 
   if (drop_empty) {
-    o = drop_empty_hot_rows(o)
+    o <- drop_empty_hot_rows(o)
   }
 
   cleaner(o)
@@ -121,18 +123,18 @@ save_from_hot <- function(input, table, drop_empty = FALSE) {
 
 
 hot_db_table <- function(table, n_empty = 10, exclude_columns = character()) {
-  con = db_con()
+  con <- db_con()
   on.exit(DBI::dbDisconnect(con), add = TRUE)
 
-  dat =
+  dat <-
     DBI::dbReadTable(con, table) |>
     setDT() |>
     hot_safe_table()
 
-  dat = dat[, setdiff(names(dat), exclude_columns), with = FALSE]
+  dat <- dat[, setdiff(names(dat), exclude_columns), with = FALSE]
 
-  empty_rows = as.data.frame(matrix(NA, ncol = ncol(dat), nrow = n_empty))
-  names(empty_rows) = names(dat)
+  empty_rows <- as.data.frame(matrix(NA, ncol = ncol(dat), nrow = n_empty))
+  names(empty_rows) <- names(dat)
 
   rbind(dat, empty_rows)
 }
@@ -148,7 +150,7 @@ hot_append_table <- function(
   colorder,
   dropdowns = list()
 ) {
-  x = if (missing(colorder)) {
+  x <- if (missing(colorder)) {
     emptyFrame(
       table = table,
       n = n_empty,
@@ -165,17 +167,23 @@ hot_append_table <- function(
     )
   }
 
-  out =
+  out <-
     x |>
     rhandsontable(
+      outsideClickDeselect = FALSE,
+      enterMoves = list(row = 1, col = 0),
       afterGetColHeader = js_hot_tippy_header(comments, "description")
     ) |>
-    hot_cols(columnSorting = FALSE, manualColumnResize = TRUE) |>
+    hot_cols(
+      columnSorting = FALSE,
+      manualColumnResize = TRUE,
+      autoColumnSize = TRUE
+    ) |>
     hot_rows(fixedRowsTop = 1)
 
   for (nm in names(dropdowns)) {
     if (nm %in% names(x)) {
-      out =
+      out <-
         out |>
         hot_col(
           col = nm,

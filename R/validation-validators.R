@@ -17,8 +17,8 @@ NULL
 #' x = data.table(v1 = c(1,2, NA, NA), v2  = c(1,2, NA, NA) )
 #' is.na_validator(x)
 is.na_validator <- function(x, reason = 'mandatory') {
-  o = meltall(x, FALSE)
-  o = o[is.na(value), .(rowid, variable)]
+  o <- meltall(x, FALSE)
+  o <- o[is.na(value), .(rowid, variable)]
   o[, reason := reason]
   o
 }
@@ -44,7 +44,7 @@ POSIXct_validator <- function(
   ago = 7,
   reason = 'date-time wrong, in the future or older than a week'
 ) {
-  o = meltall(x)
+  o <- meltall(x)
 
   o[, datetime_ := strp_date_or_time(value)]
 
@@ -53,7 +53,7 @@ POSIXct_validator <- function(
   o[datetime_ > as.POSIXct(Sys.Date() + 1), v := FALSE] # do not allow future dates
   o[datetime_ < Sys.time() - 3600 * 24 * ago, v := FALSE] # more than a week ago
 
-  o = o[(!v), .(rowid, variable)]
+  o <- o[(!v), .(rowid, variable)]
   o[, reason := reason]
   o
 }
@@ -67,11 +67,11 @@ POSIXct_validator <- function(
 #' hhmm_validator(x)
 
 hhmm_validator <- function(x, reason = 'invalid time') {
-  regexp = '^([0-1][0-9]|[2][0-3]):([0-5][0-9])$' # HH:MM
-  o = meltall(x)
-  o = o[, v := str_detect(value, regexp), by = variable]
+  regexp <- '^([0-1][0-9]|[2][0-3]):([0-5][0-9])$' # HH:MM
+  o <- meltall(x)
+  o <- o[, v := str_detect(value, regexp), by = variable]
 
-  o = o[(!v), .(rowid, variable)]
+  o <- o[(!v), .(rowid, variable)]
   o[, reason := reason]
   o
 }
@@ -85,11 +85,11 @@ hhmm_validator <- function(x, reason = 'invalid time') {
 #' print(date_validator(x))
 
 date_validator <- function(x, reason = 'invalid date - should be: yyyy-mm-dd') {
-  regexp = '^\\d\\d\\d\\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$' # YYYY-MM-DD
-  o = meltall(x)
-  o = o[, v := str_detect(value, regexp), by = variable]
+  regexp <- '^\\d\\d\\d\\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$' # YYYY-MM-DD
+  o <- meltall(x)
+  o <- o[, v := str_detect(value, regexp), by = variable]
 
-  o = o[(!v), .(rowid, variable)]
+  o <- o[(!v), .(rowid, variable)]
   o[, reason := reason]
   o
 }
@@ -106,11 +106,11 @@ datetime_validator <- function(
   x,
   reason = 'invalid datetime_ - should be: yyyy-mm-dd hh:mm'
 ) {
-  regexp = '^\\d\\d\\d\\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) ([0-1][0-9]|[2][0-3]):([0-5][0-9])$' # YYYY-MM-DD hh:mm
-  o = meltall(x)
-  o = o[, v := str_detect(value, regexp), by = variable]
+  regexp <- '^\\d\\d\\d\\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) ([0-1][0-9]|[2][0-3]):([0-5][0-9])$' # YYYY-MM-DD hh:mm
+  o <- meltall(x)
+  o <- o[, v := str_detect(value, regexp), by = variable]
 
-  o = o[(!v), .(rowid, variable)]
+  o <- o[(!v), .(rowid, variable)]
   o[, reason := reason]
   o
 }
@@ -127,11 +127,11 @@ datetime_validatorSS <- function(
   x,
   reason = 'invalid datetime_ - should be: yyyy-mm-dd hh:mm:ss'
 ) {
-  regexp = '^\\d\\d\\d\\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) ([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9])$' # YYYY-MM-DD hh:mm:ss
-  o = meltall(x)
-  o = o[, v := str_detect(value, regexp), by = variable]
+  regexp <- '^\\d\\d\\d\\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) ([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9])$' # YYYY-MM-DD hh:mm:ss
+  o <- meltall(x)
+  o <- o[, v := str_detect(value, regexp), by = variable]
 
-  o = o[(!v), .(rowid, variable)]
+  o <- o[(!v), .(rowid, variable)]
   o[, reason := reason]
   o
 }
@@ -159,7 +159,7 @@ time_order_validator <- function(
 ) {
   ensure_rowid(x)
 
-  o = x[, c(time1, time2, 'rowid'), with = FALSE]
+  o <- x[, c(time1, time2, 'rowid'), with = FALSE]
   setnames(o, c('time1', 'time2', 'rowid'))
 
   f <- function(x) strptime(x, format = "%H:%M") |> as.POSIXct()
@@ -178,7 +178,7 @@ time_order_validator <- function(
   o[, difft := difftime(dt2, dt1, units = units)]
   o[, invalid := difft < 0 | difft > time_max]
 
-  o = o[(invalid), .(rowid)]
+  o <- o[(invalid), .(rowid)]
   o[, variable := time1]
   o[, reason := reason]
   o
@@ -207,7 +207,7 @@ datetime_order_validator <- function(
 ) {
   ensure_rowid(x)
 
-  o = x[, c(time1, time2, 'rowid'), with = FALSE]
+  o <- x[, c(time1, time2, 'rowid'), with = FALSE]
   setnames(o, c('time1', 'time2', 'rowid'))
 
   if (inherits(o$time1, 'character')) {
@@ -220,7 +220,7 @@ datetime_order_validator <- function(
   o[, difft := difftime(time2, time1, units = units)]
   o[, invalid := difft < 0 | difft > time_max]
 
-  o = o[(invalid), .(rowid)]
+  o <- o[(invalid), .(rowid)]
   o[, variable := time1]
   o[, reason := reason]
   o
@@ -245,12 +245,12 @@ interval_validator <- function(
   v,
   reason = 'unusually small or large measure'
 ) {
-  o = meltall(x)
-  o = merge(o, v, by = 'variable', sort = FALSE)
+  o <- meltall(x)
+  o <- merge(o, v, by = 'variable', sort = FALSE)
 
   o[, v := value >= lq & value <= uq]
 
-  o = o[(!v), .(rowid, variable)]
+  o <- o[(!v), .(rowid, variable)]
   o[, reason := reason]
   o
 }
@@ -264,12 +264,12 @@ interval_validator <- function(
 #' v = data.table(variable = c('v1', 'v2'), n = c(1, 2) )
 #' nchar_validator(x, v)
 nchar_validator <- function(x, v, reason = 'incorrect number of characters') {
-  o = meltall(x)
-  o = merge(o, v, by = 'variable', sort = FALSE)
+  o <- meltall(x)
+  o <- merge(o, v, by = 'variable', sort = FALSE)
 
   o[, v := nchar(value) == n, by = .(rowid, variable)]
 
-  o = o[(!v), .(rowid, variable)]
+  o <- o[(!v), .(rowid, variable)]
   o[, reason := reason]
   o
 }
@@ -286,12 +286,12 @@ nchar_validator <- function(x, v, reason = 'incorrect number of characters') {
 #' is.element_validator(x, v)
 
 is.element_validator <- function(x, v, reason = 'invalid entry') {
-  o = meltall(x)
-  o = merge(o, v, by = 'variable', sort = FALSE)
+  o <- meltall(x)
+  o <- merge(o, v, by = 'variable', sort = FALSE)
 
   o[, v := is.element(value, unlist(set)), by = .(rowid, variable)]
 
-  o = o[(!v), .(rowid, variable)]
+  o <- o[(!v), .(rowid, variable)]
   o[, reason := reason]
   o
 }
@@ -308,12 +308,12 @@ is.element_validator <- function(x, v, reason = 'invalid entry') {
 #' is.duplicate_validator(x, v)
 
 is.duplicate_validator <- function(x, v, reason = 'duplicate entry') {
-  o = meltall(x)
-  o = merge(o, v, by = 'variable', sort = FALSE)
+  o <- meltall(x)
+  o <- merge(o, v, by = 'variable', sort = FALSE)
 
   o[, v := is.element(value, unlist(set)), by = .(rowid, variable)]
 
-  o = o[(v), .(rowid, variable)]
+  o <- o[(v), .(rowid, variable)]
   o[, reason := reason]
   o
 }
@@ -329,12 +329,12 @@ is.duplicate_validator <- function(x, v, reason = 'duplicate entry') {
 #' is.identical_validator(x, v)
 
 is.identical_validator <- function(x, v, reason = 'invalid entry') {
-  o = meltall(x)
-  o = merge(o, v, by = 'variable', sort = FALSE)
+  o <- meltall(x)
+  o <- merge(o, v, by = 'variable', sort = FALSE)
 
   o[, v := (value == x)]
 
-  o = o[(!v), .(rowid, variable)]
+  o <- o[(!v), .(rowid, variable)]
   o[, reason := reason]
   o
 }
@@ -361,50 +361,36 @@ is.regexp_validator <- function(x, regexp, reason = "invalid pattern") {
 }
 
 
-#' @rdname    validators
-#' Validate R code syntax
-#'
+#' @rdname validators
+#' @name rcode_validator
 #' @param x A data.frame or data.table containing R code.
-#' @param column Code column to validate. Defaults to the first non-`rowid`
-#'   column.
-#' @param allow_empty Whether empty strings are allowed.
-#' @param exactly_one Whether code must parse to exactly one expression.
+#' @param column Code column to validate.
 #' @param reason Validation reason prefix.
 #'
 #' @return A data.table with `rowid`, `variable`, and `reason`.
 #' @export
 rcode_validator <- function(
   x,
-  column = NULL,
-  allow_empty = FALSE,
-  exactly_one = FALSE,
+  column,
   reason = "invalid R code"
 ) {
-  x = data.table::as.data.table(data.table::copy(x))
+  x <- copy(x)
   ensure_rowid(x)
 
-  if (is.null(column)) {
-    column = setdiff(names(x), "rowid")[[1L]]
-  }
-
   if (!column %in% names(x)) {
-    return(data.table::data.table(
+    return(data.table(
       rowid = NA_integer_,
       variable = column,
       reason = paste0(reason, ": missing column `", column, "`")
     ))
   }
 
-  check_one = function(code) {
+  check_one <- function(code) {
     if (is.na(code) || !nzchar(trimws(code))) {
-      if (isTRUE(allow_empty)) {
-        return("")
-      }
-
       return("empty code")
     }
 
-    parsed = tryCatch(
+    parsed <- tryCatch(
       parse(text = code, keep.source = FALSE),
       error = conditionMessage
     )
@@ -413,7 +399,7 @@ rcode_validator <- function(
       return(parsed)
     }
 
-    if (isTRUE(exactly_one) && length(parsed) != 1L) {
+    if (length(parsed) != 1L) {
       return(sprintf(
         "expected exactly one expression, got %s",
         length(parsed)
@@ -423,16 +409,16 @@ rcode_validator <- function(
     ""
   }
 
-  issues = vapply(
+  issues <- vapply(
     x[[column]],
     check_one,
     character(1),
     USE.NAMES = FALSE
   )
 
-  i = nzchar(issues)
+  i <- nzchar(issues)
 
-  data.table::data.table(
+  data.table(
     rowid = x$rowid[i],
     variable = column,
     reason = paste(reason, issues[i], sep = ": ")

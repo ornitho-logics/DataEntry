@@ -1,0 +1,26 @@
+url: https://mpio-be.github.io/DataEntry/
+
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github]
+
+reference:
+  - title: Apps
+    contents:
+      - ui_append_rows
+      - ui_edit_table
+      - ui_edit_inspectors
+      - server_append_rows
+      - server_edit_table
+      - server_edit_inspectors
+  - title: Database
+    contents:
+      - db_con
+      - db_get
+  - title: Validation
+    contents:
+      - validators

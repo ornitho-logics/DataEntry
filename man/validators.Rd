@@ -17,6 +17,7 @@
 \alias{is.duplicate_validator}
 \alias{is.identical_validator}
 \alias{is.regexp_validator}
+\alias{rcode_validator}
 \title{\if{html}{\out{<div class="sourceCode">}}\preformatted{    data validators
 }\if{html}{\out{</div>}}}
 \usage{
@@ -71,11 +72,19 @@ is.duplicate_validator(x, v, reason = "duplicate entry")
 is.identical_validator(x, v, reason = "invalid entry")
 
 is.regexp_validator(x, regexp, reason = "invalid pattern")
+
+rcode_validator(
+  x,
+  column = NULL,
+  allow_empty = FALSE,
+  exactly_one = FALSE,
+  reason = "invalid R code"
+)
 }
 \arguments{
-\item{x}{a data.table whose entries needs to be validated.}
+\item{x}{A data.frame or data.table containing R code.}
 
-\item{reason}{explain why it did not pass the validation.}
+\item{reason}{Validation reason prefix.}
 
 \item{ago}{number of days indicating old data entry (set to a week)}
 
@@ -90,11 +99,20 @@ is.regexp_validator(x, regexp, reason = "invalid pattern")
 \item{v}{a data.table containing the validation rules. See notes.}
 
 \item{regexp}{for is.regexp_validator: a regexp expression}
+
+\item{column}{Code column to validate. Defaults to the first non-\code{rowid}
+column.}
+
+\item{allow_empty}{Whether empty strings are allowed.}
+
+\item{exactly_one}{Whether code must parse to exactly one expression.}
 }
 \value{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{   a data.table with two columns: variable (the names of the columns in x)
            and rowid (the position of offending (i.e. not validated) entries).
 }\if{html}{\out{</div>}}
+
+A data.table with \code{rowid}, \code{variable}, and \code{reason}.
 }
 \description{
 all validators (except is.na_validator) ignore NA entries.

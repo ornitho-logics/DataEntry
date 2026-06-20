@@ -1,5 +1,18 @@
 inspector_loader <- function(table_name, ...) {
-  inspectors = db_get(
+  if (!inspectors_table_exists()) {
+    if (!is.null(shiny::getDefaultReactiveDomain())) {
+      showNotification(
+        ui = "The inspectors table is missing. Validation was skipped.",
+        type = "warning",
+        duration = 8,
+        closeButton = TRUE
+      )
+    }
+
+    return(function(x, ...) list())
+  }
+
+  inspectors <- db_get(
     "SELECT inspector FROM inspectors WHERE table_name = ? ORDER BY updated_at, table_name",
     ...,
     params = list(table_name)
@@ -9,7 +22,7 @@ inspector_loader <- function(table_name, ...) {
     return(function(x, ...) list())
   }
 
-  inspector = paste0(
+  inspector <- paste0(
     "c(\n",
     paste(inspectors$inspector, collapse = ",\n"),
     "\n)"
@@ -20,7 +33,7 @@ inspector_loader <- function(table_name, ...) {
 
 
 inspector_from_text <- function(inspector) {
-  expr = parse(
+  expr <- parse(
     text = inspector,
     keep.source = FALSE
   )
@@ -36,8 +49,8 @@ inspector_from_text <- function(inspector) {
 
   function(x, ...) {
     local({
-      expr = expr
-      x = x
+      expr <- expr
+      x <- x
 
       unix::eval_safe(
         eval(expr),
@@ -48,10 +61,10 @@ inspector_from_text <- function(inspector) {
 }
 
 try_validator <- function(..., nam = "") {
-  ev = try(..., silent = TRUE)
+  ev <- try(..., silent = TRUE)
 
   if (inherits(ev, "try-error")) {
-    o = data.frame(
+    o <- data.frame(
       rowid = as.character(NA),
       variable = as.character(NA),
       reason = glue(
@@ -70,7 +83,7 @@ try_validator <- function(..., nam = "") {
         as.character()
     )
   } else {
-    o = ev
+    o <- ev
   }
 
   o
@@ -101,7 +114,7 @@ validation_issues <- function(x, table_name, ...) {
 
 
 add_nov_flags <- function(x, issues) {
-  x = copy(x)
+  x <- copy(x)
   x[, nov := 0]
 
   if (nrow(issues) > 0) {

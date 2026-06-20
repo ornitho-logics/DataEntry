@@ -5,3 +5,7 @@ DataEntry.sublime-project
 DataEntry.sublime-workspace
 README-1.png
 _\.new\.png$
+^_pkgdown\.yml$
+^\.github$
+^docs$
+^pkgdown$

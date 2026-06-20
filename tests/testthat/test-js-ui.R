@@ -1,6 +1,6 @@
 test_that("dataentry_deps registers expected html dependencies", {
-  deps = htmltools::findDependencies(dataentry_deps())
-  names = vapply(deps, `[[`, character(1), "name")
+  deps <- htmltools::findDependencies(dataentry_deps())
+  names <- vapply(deps, `[[`, character(1), "name")
 
   expect_setequal(
     names,
@@ -9,8 +9,8 @@ test_that("dataentry_deps registers expected html dependencies", {
 })
 
 test_that("javascript helper functions return html fragments with expected content", {
-  ts = as.character(js_insertMySQLTimeStamp())
-  unload = as.character(js_before_unload("Leave?"))
+  ts <- as.character(js_insertMySQLTimeStamp())
+  unload <- as.character(js_before_unload("Leave?"))
 
   expect_match(ts, "keyup", fixed = TRUE)
   expect_match(ts, "toISOString", fixed = TRUE)
@@ -21,12 +21,12 @@ test_that("javascript helper functions return html fragments with expected conte
 })
 
 test_that("js_hot_tippy_header returns JavaScript containing tooltip lookup data", {
-  comments = data.frame(
+  comments <- data.frame(
     Column = c("id", "measure"),
     description = c("Identifier", "Measurement")
   )
 
-  out = as.character(js_hot_tippy_header(comments, "description"))
+  out <- as.character(js_hot_tippy_header(comments, "description"))
 
   expect_match(out, "function(i, TH)", fixed = TRUE)
   expect_match(out, "titleLookup", fixed = TRUE)
@@ -37,7 +37,7 @@ test_that("js_hot_tippy_header returns JavaScript containing tooltip lookup data
 })
 
 test_that("ddmenu renders required controls with validation toggle", {
-  html = htmltools::renderTags(
+  html <- htmltools::renderTags(
     ddmenu(tnam = "data_entry")
   )$html
 
@@ -47,8 +47,19 @@ test_that("ddmenu renders required controls with validation toggle", {
   expect_match(html, "cheatsheetButton", fixed = TRUE)
 })
 
+test_that("ddmenu can render without validation toggle", {
+  html <- htmltools::renderTags(
+    ddmenu(tnam = "inspectors", show_validation = FALSE)
+  )$html
+
+  expect_match(html, "inspectors", fixed = TRUE)
+  expect_match(html, "saveButton", fixed = TRUE)
+  expect_no_match(html, "ignore_checks", fixed = TRUE)
+  expect_match(html, "cheatsheetButton", fixed = TRUE)
+})
+
 test_that("ui_edit_table renders the table output and menu", {
-  html = htmltools::renderTags(
+  html <- htmltools::renderTags(
     ui_edit_table(table_name = "data_entry")
   )$html
 
@@ -57,12 +68,23 @@ test_that("ui_edit_table renders the table output and menu", {
   expect_match(html, "data_entry", fixed = TRUE)
 })
 
+test_that("ui_edit_inspectors hides the validation toggle", {
+  html <- htmltools::renderTags(
+    ui_edit_inspectors(table_name = "inspectors")
+  )$html
+
+  expect_match(html, "table", fixed = TRUE)
+  expect_match(html, "saveButton", fixed = TRUE)
+  expect_match(html, "inspectors", fixed = TRUE)
+  expect_no_match(html, "ignore_checks", fixed = TRUE)
+})
+
 test_that("ui_append_rows renders the table output, issues panel placeholder, and ShinyJS support UI", {
-  tags = htmltools::renderTags(
+  tags <- htmltools::renderTags(
     ui_append_rows(table_name = "data_entry")
   )
 
-  html = tags$html
+  html <- tags$html
 
   expect_match(html, 'id="table"', fixed = TRUE)
   expect_match(html, 'id="saveButton"', fixed = TRUE)

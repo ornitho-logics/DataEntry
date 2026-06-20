@@ -1,22 +1,31 @@
-validation_panel <- function(input, output, Save, table_name) {
-  open = reactiveVal(FALSE)
+validation_panel <- function(
+  input,
+  output,
+  Save,
+  table_name = NULL,
+  issues = NULL
+) {
+  if (is.null(issues)) {
+    force(table_name)
+    issues <- function(x) validation_issues(x, table_name = table_name)
+  }
+
+  open <- reactiveVal(FALSE)
 
   observeEvent(input$close_invalid_entries, {
     open(FALSE)
   })
 
-  output$invalid_entries_panel = renderUI({
+  output$invalid_entries_panel <- renderUI({
     req(open())
 
-    invalid_entries =
-      Save() |>
-      validation_issues(table_name = table_name)
+    invalid_entries <- issues(Save())
 
     if (nrow(invalid_entries) == 0) {
       return(NULL)
     }
 
-    invalid_table =
+    invalid_table <-
       invalid_entries |>
       tableHTML(
         rownames = FALSE
@@ -53,9 +62,21 @@ validation_panel <- function(input, output, Save, table_name) {
   )
 }
 
-validate_before_save <- function(input, x, table_name, validation_panel) {
-  issues = validation_issues(x, table_name = table_name)
-  ignore_validators = isTRUE(input$ignore_checks)
+validate_before_save <- function(
+  input,
+  x,
+  table_name = NULL,
+  validation_panel,
+  issues = NULL,
+  allow_ignore = TRUE
+) {
+  if (is.null(issues)) {
+    force(table_name)
+    issues <- function(x) validation_issues(x, table_name = table_name)
+  }
+
+  issues <- issues(x)
+  ignore_validators <- isTRUE(allow_ignore) && isTRUE(input$ignore_checks)
 
   if (nrow(issues) > 0 && !ignore_validators) {
     validation_panel$open(TRUE)

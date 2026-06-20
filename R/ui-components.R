@@ -1,6 +1,26 @@
 ddmenu <- function(
-  tnam = "Table Name"
+  tnam = "Table Name",
+  show_validation = TRUE
 ) {
+  validation_controls <- if (isTRUE(show_validation)) {
+    tagList(
+      hr(),
+
+      switchInput(
+        inputId = "ignore_checks",
+        label = "VALIDATION",
+        value = FALSE,
+        inline = TRUE,
+        size = "large",
+        width = "auto",
+        offStatus = "success",
+        onStatus = "danger",
+        onLabel = tagList("OFF ", icon("frown")),
+        offLabel = tagList("ON ", icon("smile"))
+      )
+    )
+  }
+
   dropdown(
     inputId = "menu",
     circle = FALSE,
@@ -20,23 +40,8 @@ ddmenu <- function(
       block = TRUE,
       icon = icon("save")
     ),
+    validation_controls,
     hr(),
-
-    switchInput(
-      inputId = "ignore_checks",
-      label = "VALIDATION",
-      value = FALSE,
-      inline = TRUE,
-      size = "large",
-      width = "auto",
-      offStatus = "success",
-      onStatus = "danger",
-      onLabel = tagList("OFF ", icon("frown")),
-      offLabel = tagList("ON ", icon("smile"))
-    ),
-
-    hr(),
-
     actionBttn(
       inputId = "cheatsheetButton",
       label = "Keyboard shortcuts",
@@ -47,6 +52,7 @@ ddmenu <- function(
   ) |>
     tags$div(class = "dataentry-ddmenu")
 }
+
 
 dataentry_deps <- function() {
   htmltools::tagList(
@@ -112,7 +118,7 @@ dataentry_notif <- function(msg, type = "message", duration = 20) {
 }
 
 updated_table_feedback <- function(bk_path, ...) {
-  msg = glue(
+  msg <- glue(
     'Table saved!<br>
     Backup stored as <br>
     <code>{bk_path |> basename()}</code>.'
@@ -122,7 +128,7 @@ updated_table_feedback <- function(bk_path, ...) {
 }
 
 appended_rows_feedback <- function(x, ignore = TRUE, ...) {
-  msg = if (ignore) {
+  msg <- if (ignore) {
     glue(
       "
     <h4>
@@ -155,11 +161,11 @@ save_backup <- function(
   backup_dir,
   db = get("db", envir = .GlobalEnv)
 ) {
-  sub_dir = fs::path(backup_dir, db)
+  sub_dir <- fs::path(backup_dir, db)
 
   fs::dir_create(sub_dir, recurse = TRUE)
 
-  backup_filename = fs::path(
+  backup_filename <- fs::path(
     sub_dir,
     glue::glue("backup_{db}_{name}_{format(Sys.time(), '%Y%m%d_%H%M%S')}.csv")
   )
@@ -179,7 +185,7 @@ table_has_nov <- function(table) {
 
 
 column_comment <- function(table, exclude_columns = "pk") {
-  x = db_get(
+  x <- db_get(
     query = paste0(
       "SELECT COLUMN_NAME `Column`, COLUMN_COMMENT description FROM 
           information_schema.COLUMNS

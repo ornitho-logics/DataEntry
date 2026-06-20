@@ -1,19 +1,19 @@
 library(data.table)
 
 test_that("try_validator returns valid validator output unchanged", {
-  ev = data.frame(
+  ev <- data.frame(
     rowid = "1",
     variable = "a",
     reason = "bad"
   )
 
-  out = try_validator(ev, nam = "valid")
+  out <- try_validator(ev, nam = "valid")
 
   expect_equal(out, ev)
 })
 
 test_that("try_validator converts validator errors into validator-shaped output", {
-  out = try_validator(stop("boom"), nam = "broken")
+  out <- try_validator(stop("boom"), nam = "broken")
 
   expect_named(out, c("rowid", "variable", "reason"))
   expect_true(is.na(out$rowid))
@@ -23,7 +23,7 @@ test_that("try_validator converts validator errors into validator-shaped output"
 })
 
 test_that("try_validator catches outputs with the wrong shape", {
-  out = try_validator(data.frame(a = 1), nam = "wrong")
+  out <- try_validator(data.frame(a = 1), nam = "wrong")
 
   expect_named(out, c("rowid", "variable", "reason"))
   expect_true(is.na(out$rowid))
@@ -32,13 +32,13 @@ test_that("try_validator catches outputs with the wrong shape", {
 })
 
 test_that("evalidators combines validator outputs by variable and reason", {
-  L = list(
+  L <- list(
     data.table(rowid = c(1L, 2L), variable = "a", reason = "bad"),
     data.table(rowid = 3L, variable = "a", reason = "bad"),
     data.table(rowid = 2L, variable = "b", reason = "missing")
   )
 
-  out = evalidators(L)
+  out <- evalidators(L)
 
   expect_s3_class(out, "data.table")
   expect_equal(nrow(out), 2L)
@@ -47,7 +47,7 @@ test_that("evalidators combines validator outputs by variable and reason", {
 })
 
 test_that("inspector_from_text builds an inspector function from list expression text", {
-  inspector = DataEntry:::inspector_from_text(
+  inspector <- DataEntry:::inspector_from_text(
     paste(
       "list(",
       "  data.frame(rowid = '1', variable = 'a', reason = 'bad')",
@@ -58,7 +58,7 @@ test_that("inspector_from_text builds an inspector function from list expression
 
   expect_type(inspector, "closure")
 
-  out =
+  out <-
     inspector(data.table(a = 1)) |>
     evalidators()
 
@@ -70,7 +70,7 @@ test_that("inspector_from_text builds an inspector function from list expression
 })
 
 test_that("inspector_from_text evaluates inspector text with x in scope", {
-  inspector = DataEntry:::inspector_from_text(
+  inspector <- DataEntry:::inspector_from_text(
     paste(
       "list(",
       "	x[, .(a)] |> is.na_validator()",
@@ -79,9 +79,9 @@ test_that("inspector_from_text evaluates inspector text with x in scope", {
     )
   )
 
-  x = data.table(a = c(1, NA, 3))
+  x <- data.table(a = c(1, NA, 3))
 
-  out =
+  out <-
     inspector(x) |>
     evalidators()
 
@@ -92,6 +92,7 @@ test_that("inspector_from_text evaluates inspector text with x in scope", {
 
 test_that("inspector_loader reads inspector text from db_get", {
   local_mocked_bindings(
+    inspectors_table_exists = function() TRUE,
     db_get = function(query, ..., params = NULL) {
       expect_match(query, "SELECT inspector FROM inspectors")
       expect_equal(params, list("data_entry"))
@@ -108,11 +109,11 @@ test_that("inspector_loader reads inspector text from db_get", {
     .package = "DataEntry"
   )
 
-  inspector = inspector_loader(table_name = "data_entry")
+  inspector <- inspector_loader(table_name = "data_entry")
 
   expect_type(inspector, "closure")
 
-  out =
+  out <-
     inspector(data.table(a = 1)) |>
     evalidators()
 
@@ -123,6 +124,7 @@ test_that("inspector_loader reads inspector text from db_get", {
 
 test_that("validation_issues loads db inspector and evaluates validators", {
   local_mocked_bindings(
+    inspectors_table_exists = function() TRUE,
     db_get = function(query, ..., params = NULL) {
       data.table(
         inspector = paste(
@@ -136,13 +138,29 @@ test_that("validation_issues loads db inspector and evaluates validators", {
     .package = "DataEntry"
   )
 
-  x = data.table(a = c(1, NA, 3))
+  x <- data.table(a = c(1, NA, 3))
 
-  out = validation_issues(x, table_name = "data_entry")
+  out <- validation_issues(x, table_name = "data_entry")
 
   expect_s3_class(out, "data.table")
   expect_equal(nrow(out), 1L)
   expect_equal(out$rowid, "2")
   expect_equal(out$variable, "a")
   expect_equal(out$reason, "mandatory")
+})
+
+
+test_that("inspector_loader returns an empty inspector when inspectors table is missing", {
+  local_mocked_bindings(
+    inspectors_table_exists = function() FALSE,
+    db_get = function(...) {
+      fail("db_get should not be called when inspectors table is missing")
+    },
+    .package = "DataEntry"
+  )
+
+  inspector <- inspector_loader(table_name = "data_entry")
+
+  expect_type(inspector, "closure")
+  expect_equal(inspector(data.table(a = 1)), list())
 })

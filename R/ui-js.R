@@ -1,3 +1,30 @@
+js_ctrl_s_open_ddmenu <- function(menu_id = "menu") {
+  HTML(
+    glue::glue(
+      "
+      <script>
+        document.addEventListener('keydown', function(e) {{
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {{
+            e.preventDefault();
+            e.stopPropagation();
+
+            var menu = document.getElementById('{menu_id}');
+            if (!menu) {{
+              return;
+            }}
+
+            if (menu.getAttribute('aria-expanded') !== 'true') {{
+              menu.click();
+            }}
+          }}
+        }}, true);
+      </script>
+      "
+    )
+  )
+}
+
+
 # translate two forward slashes to a Mysql timestamp (http://keycode.info/)
 js_insertMySQLTimeStamp <- function() {
   HTML(
