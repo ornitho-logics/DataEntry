@@ -7,17 +7,24 @@
 db_con(.cnf = get("cnf_path", envir = .GlobalEnv))
 }
 \arguments{
-\item{host}{Database host.}
-
-\item{user}{Database user.}
-
-\item{pwd}{Database password.}
-
-\item{db}{Database name.}
+\item{.cnf}{Path to a MariaDB option file. Defaults to \code{cnf_path} from the
+global environment.}
 }
 \value{
 A MariaDB connection.
 }
 \description{
-Uses credentials from the global environment by default.
+Creates a MariaDB connection from an option file, using the \code{DataEntry}
+option group.
+}
+\details{
+The example apps define \code{cnf_path} in \code{global.R} and point it to the package
+test configuration:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{cnf_path = system.file("database", "DataTable.cnf", package = "DataEntry")
+}\if{html}{\out{</div>}}
+
+The option file should contain a \verb{[DataEntry]} group with connection fields
+understood by \code{RMariaDB::MariaDB()}, for example \code{host}, \code{user},
+\code{password}, and \code{database}.
 }

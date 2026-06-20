@@ -1,12 +1,23 @@
 url: https://mpio-be.github.io/DataEntry/
 
 template:
-  bootstrap: 5
+  params:
+    bootswatch: flatly
 
 navbar:
   structure:
     left: [ intro, reference, articles, news ]
-    right: [ search, github ]
+    right: [ github ]
+
+home:
+  sidebar:
+    structure: [ custom_links, license, citation, authors, dev ]
+    components:
+      custom_links:
+        title: Links
+        text: |
+          * [Browse source code](https://github.com/mpio-be/DataEntry)
+          * [Report a bug](https://github.com/mpio-be/DataEntry/issues)
 
 reference:
 - title: Apps

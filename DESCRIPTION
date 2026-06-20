@@ -1,10 +1,10 @@
 Package: DataEntry
-Version: 2026.0.0.2
+Version: 2026.0.0.3
 Author: Mihai Valcu
 Maintainer: Mihai Valcu <Mihai.Valcu@bi.mpg.de>
 Title: Shiny Data Entry Interfaces for Database Tables
 Description: Build Shiny applications for entering and editing database tables with rhandsontable. Provides table-specific validation, editable validation rules, database save workflows, and backup support for MariaDB-backed data entry.
-License: GPL (>= 2)
+License: GPL (>= 3)
 Depends:
     R (>= 4.1.0),
 Imports:
@@ -31,8 +31,8 @@ Suggests:
     pkgdown,
     testthat,
     withr
-URL: https://mpio-be.github.io/DataEntry/, https://github.com/mpio-be/DataEntry, https://ornitho-logics.github.io/DataEntry/
-BugReports: https://github.com/mpio-be/DataEntry/issues    
+URL: https://ornitho-logics.github.io/DataEntry/
+BugReports: https://github.com/ornitho-logics/DataEntry/issues    
 Roxygen: list(markdown = TRUE)    
 Encoding: UTF-8
 Config/roxygen2/version: 8.0.0
