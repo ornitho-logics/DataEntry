@@ -65,9 +65,9 @@ emptyFrame <- function(
     tempcol := NULL
   ]
 
-  if (!missing(preFilled)) {
-    for (i in 1:length(preFilled)) {
-      set(F, j = names(preFilled[i]), value = preFilled[[i]])
+  if (!missing(preFilled) && length(preFilled) > 0) {
+    for (nm in names(preFilled)) {
+      set(F, j = nm, value = preFilled[[nm]])
     }
   }
 
