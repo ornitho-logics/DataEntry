@@ -18,21 +18,52 @@ This package deliberately keeps validation in the data entry layer rather than r
 For that reason, validation failures are shown clearly to the user before saving, but the user can still choose to bypass them. Bypassed entries are flagged in the database so they can be reviewed later. The goal is to make questionable data visible and traceable, not to silently discard or block observations that may be nooreal.
 
 
-  
-Given that `test` DB exists (see `system.file('UI', '.testdb.R', package = 'DataEntry')`)
-this UI can be run with: 
+## The package includes three Shiny apps:
 
-``` R
-ui = system.file('UI', 'newData', package = 'DataEntry')
-shiny::runApp(ui, launch.browser = TRUE)
+```r
+
+shiny::runApp(
+  system.file("UI", "newData", package = "DataEntry"),
+  launch.browser = TRUE
+)
+
+shiny::runApp(
+  system.file("UI", "editData", package = "DataEntry"),
+  launch.browser = TRUE
+)
+
+shiny::runApp(
+  system.file("UI", "editInspector", package = "DataEntry"),
+  launch.browser = TRUE
+)
+
 ```
 
+These apps expect the test database configured by:
+```r
+system.file("UI", ".testdb.R", package = "DataEntry")
+```
+The SQL installer for the `data_entry_tests` database is available at:
+```r
+system.file("database", "install_testdb.sql", package = "DataEntry")
+```
+From a shell, install it with something like:
+```sh
+mariadb -u root -p < path/to/install_testdb.sql
+```
+The SQL creates the `data_entry_tests` database, the test user, and the
+tables used by the example apps.
 
-Installation
-------------
+<hr>
+
+![newData app](man/figures/readme-newData.png)
+
+
+## Installation
+
 ``` R
 
 install.packages("remotes")
-remotes::install_github("mpio-be/DataEntry")
+remotes::install_github("ornitho-logics/DataEntry")
 
 ```

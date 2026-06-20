@@ -20,3 +20,4 @@ vignettes/*.png
 *.sublime-workspace
 # {shinytest2}: Ignore new debug snapshots for `$expect_values()`
 *_.new.png
+docs

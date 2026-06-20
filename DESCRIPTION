@@ -31,7 +31,7 @@ Suggests:
     pkgdown,
     testthat,
     withr
-URL: https://mpio-be.github.io/DataEntry/, https://github.com/mpio-be/DataEntry
+URL: https://mpio-be.github.io/DataEntry/, https://github.com/mpio-be/DataEntry, https://ornitho-logics.github.io/DataEntry/
 BugReports: https://github.com/mpio-be/DataEntry/issues    
 Roxygen: list(markdown = TRUE)    
 Encoding: UTF-8

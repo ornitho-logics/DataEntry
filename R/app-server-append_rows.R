@@ -1,24 +1,31 @@
-#' server_append_rows
+#' Data entry server modules
 #'
+#' @param input Shiny input object.
+#' @param output Shiny output object.
+#' @param session Shiny session object.
+#'
+#' @return Called for side effects.
+#'
+#' @rdname dataentry_servers
 #' @export
-#' @note see global.R in inst/UI/newData for required variables to set.
 #'
+#' @note See `global.R` in `inst/UI/newData` for required variables to set.
 server_append_rows <- function(input, output, session) {
-  table_name = app_global("table_name")
+  table_name <- app_global("table_name")
 
-  exclude_columns = app_global("exclude_columns", character())
-  n_empty_lines = app_global("n_empty_lines", 20) |> as.integer()
-  prefilled = app_global("prefilled", list())
-  dropdowns = app_global("dropdowns", list())
+  exclude_columns <- app_global("exclude_columns", character())
+  n_empty_lines <- app_global("n_empty_lines", 20) |> as.integer()
+  prefilled <- app_global("prefilled", list())
+  dropdowns <- app_global("dropdowns", list())
 
-  hasnov = table_has_nov(table_name)
+  hasnov <- table_has_nov(table_name)
 
-  comments = column_comment(
+  comments <- column_comment(
     table = table_name,
     exclude_columns = exclude_columns
   )
 
-  append_table =
+  append_table <-
     hot_append_table(
       table = table_name,
       n_empty = n_empty_lines,
@@ -40,7 +47,7 @@ server_append_rows <- function(input, output, session) {
     )
   })
 
-  validation_panel = validation_panel(
+  validation_panel <- validation_panel(
     input = input,
     output = output,
     Save = Save,
@@ -48,9 +55,9 @@ server_append_rows <- function(input, output, session) {
   )
 
   observeEvent(input$saveButton, {
-    x = Save()
+    x <- Save()
 
-    validation = validate_before_save(
+    validation <- validate_before_save(
       input = input,
       x = x,
       table_name = table_name,
@@ -61,15 +68,15 @@ server_append_rows <- function(input, output, session) {
       return(invisible(NULL))
     }
 
-    x = validation$x
-    cc = validation$issues
-    ignore_validators = validation$ignore_validators
+    x <- validation$x
+    cc <- validation$issues
+    ignore_validators <- validation$ignore_validators
 
     if (hasnov) {
-      x = add_nov_flags(x, cc)
+      x <- add_nov_flags(x, cc)
     }
 
-    con = db_con()
+    con <- db_con()
     on.exit(DBI::dbDisconnect(con), add = TRUE)
 
     DBI::dbWriteTable(

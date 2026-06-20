@@ -1,11 +1,21 @@
 #' Create a MariaDB connection
 #'
-#' Uses credentials from the global environment by default.
+#' Creates a MariaDB connection from an option file, using the `DataEntry`
+#' option group.
 #'
-#' @param host Database host.
-#' @param user Database user.
-#' @param pwd Database password.
-#' @param db Database name.
+#' The example apps define `cnf_path` in `global.R` and point it to the package
+#' test configuration:
+#'
+#' ```r
+#' cnf_path = system.file("database", "DataTable.cnf", package = "DataEntry")
+#' ```
+#'
+#' The option file should contain a `[DataEntry]` group with connection fields
+#' understood by `RMariaDB::MariaDB()`, for example `host`, `user`,
+#' `password`, and `database`.
+#'
+#' @param .cnf Path to a MariaDB option file. Defaults to `cnf_path` from the
+#'   global environment.
 #'
 #' @return A MariaDB connection.
 #' @export

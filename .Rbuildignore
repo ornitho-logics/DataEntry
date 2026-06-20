@@ -1,9 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .travis.yml
-DataEntry.sublime-project
-DataEntry.sublime-workspace
-README-1.png
+^man/figures/readme-newData[.]png$
 _\.new\.png$
 ^_pkgdown\.yml$
 ^\.github$

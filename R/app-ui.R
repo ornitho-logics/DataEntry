@@ -1,15 +1,26 @@
+#' Data entry UI
+#'
+#' @param table_name Label shown in the data-entry menu.
+#'
+#' @return A Shiny UI object.
+#'
+#' @rdname dataentry_ui
+#' @export
+
 #' @export
 ui_append_rows <- function(table_name = "Table Name") {
   .data_entry_ui(table_name = table_name)
 }
 
 
+#' @rdname dataentry_ui
 #' @export
 ui_edit_table <- function(table_name = "Table Name") {
   .data_entry_ui(table_name = table_name)
 }
 
 
+#' @rdname dataentry_ui
 #' @export
 ui_edit_inspectors <- function(table_name = "inspectors") {
   .data_entry_ui(

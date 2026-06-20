@@ -1,8 +1,7 @@
-#' server_edit_inspectors
-#'
+#' @rdname dataentry_servers
 #' @export
-#' @note see global.R in inst/UI/editInspector for required variables to set.
 #'
+#' @note See `global.R` in `inst/UI/editInspector` for required variables to set.
 server_edit_inspectors <- function(input, output, session) {
   table_name <- app_global("table_name", "inspectors")
   backupdir <- app_global("backupdir", tempdir())

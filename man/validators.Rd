@@ -73,13 +73,7 @@ is.identical_validator(x, v, reason = "invalid entry")
 
 is.regexp_validator(x, regexp, reason = "invalid pattern")
 
-rcode_validator(
-  x,
-  column = NULL,
-  allow_empty = FALSE,
-  exactly_one = FALSE,
-  reason = "invalid R code"
-)
+rcode_validator(x, column, reason = "invalid R code")
 }
 \arguments{
 \item{x}{A data.frame or data.table containing R code.}
@@ -100,12 +94,7 @@ rcode_validator(
 
 \item{regexp}{for is.regexp_validator: a regexp expression}
 
-\item{column}{Code column to validate. Defaults to the first non-\code{rowid}
-column.}
-
-\item{allow_empty}{Whether empty strings are allowed.}
-
-\item{exactly_one}{Whether code must parse to exactly one expression.}
+\item{column}{Code column to validate.}
 }
 \value{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{   a data.table with two columns: variable (the names of the columns in x)
