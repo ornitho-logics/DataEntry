@@ -4,7 +4,7 @@
 \alias{db_con}
 \title{Create a MariaDB connection}
 \usage{
-db_con(.cnf = NULL, group = NULL)
+db_con(.cnf = NULL, group = "DataEntry")
 }
 \arguments{
 \item{.cnf}{Path to a MariaDB option file.}
@@ -18,21 +18,7 @@ A MariaDB connection.
 Creates a MariaDB connection from an option file.
 }
 \details{
-The option file is searched in this order:
-\enumerate{
-\item \code{Sys.getenv("DATAENTRY_CNF")}
-\item \code{cnf_path} from the global environment
-\item \verb{~/.my.cnf}
-}
-
-The option group is searched in this order:
-\enumerate{
-\item \code{Sys.getenv("DATAENTRY_GROUP")}
-\item \code{cnf_group} from the global environment
-\item \code{"DataEntry"}
-}
-
-The option file should contain the selected group with connection fields
-understood by \code{RMariaDB::MariaDB()}, for example \code{host}, \code{user},
-\code{password}, and \code{database}.
+If \code{.cnf} is not supplied, \code{db_con()} first looks for \code{cnf_path} in the global
+environment, then for the \code{DATAENTRY_CNF} environment variable. The option
+file is read with the \code{DataEntry} group by default.
 }

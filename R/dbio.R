@@ -2,21 +2,9 @@
 #'
 #' Creates a MariaDB connection from an option file.
 #'
-#' The option file is searched in this order:
-#'
-#' 1. `Sys.getenv("DATAENTRY_CNF")`
-#' 2. `cnf_path` from the global environment
-#' 3. `~/.my.cnf`
-#'
-#' The option group is searched in this order:
-#'
-#' 1. `Sys.getenv("DATAENTRY_GROUP")`
-#' 2. `cnf_group` from the global environment
-#' 3. `"DataEntry"`
-#'
-#' The option file should contain the selected group with connection fields
-#' understood by `RMariaDB::MariaDB()`, for example `host`, `user`,
-#' `password`, and `database`.
+#' If `.cnf` is not supplied, `db_con()` first looks for `cnf_path` in the global
+#' environment, then for the `DATAENTRY_CNF` environment variable. The option
+#' file is read with the `DataEntry` group by default.
 #'
 #' @param .cnf Path to a MariaDB option file.
 #' @param group Option group in `.cnf`.
@@ -25,34 +13,21 @@
 #' @export
 db_con <- function(
 	.cnf = NULL,
-	group = NULL
+	group = "DataEntry"
 ) {
 	if (is.null(.cnf)) {
-		.cnf <- Sys.getenv("DATAENTRY_CNF")
-
-		if (
-			!nzchar(.cnf) && exists("cnf_path", envir = .GlobalEnv, inherits = TRUE)
-		) {
+		if (exists("cnf_path", envir = .GlobalEnv, inherits = FALSE)) {
 			.cnf <- get("cnf_path", envir = .GlobalEnv)
-		}
-
-		if (!nzchar(.cnf)) {
-			.cnf <- "~/.my.cnf"
+		} else {
+			.cnf <- Sys.getenv("DATAENTRY_CNF")
 		}
 	}
 
-	if (is.null(group)) {
-		group <- Sys.getenv("DATAENTRY_GROUP")
-
-		if (
-			!nzchar(group) && exists("cnf_group", envir = .GlobalEnv, inherits = TRUE)
-		) {
-			group <- get("cnf_group", envir = .GlobalEnv)
-		}
-
-		if (!nzchar(group)) {
-			group <- "DataEntry"
-		}
+	if (!nzchar(.cnf)) {
+		stop(
+			"Set `cnf_path` in the global environment or DATAENTRY_CNF.",
+			call. = FALSE
+		)
 	}
 
 	DBI::dbConnect(
