@@ -7,20 +7,18 @@
 
 require(DataEntry)
 
-cnf_path = system.file("database/DataTable.cnf", package = 'DataEntry')
+cnf_path <- system.file("database/DataTable.cnf", package = 'DataEntry')
 
-db = ini::read.ini(cnf_path)$DataEntry$database
+backupdir <- tempdir()
 
-backupdir = tempdir()
+n_empty_lines <- 2
 
-n_empty_lines = 2
+exclude_columns <- "updated_at"
 
-exclude_columns = "updated_at"
+code_column <- "inspector"
 
-code_column = "inspector"
+table_name <- "inspectors"
 
-table_name = "inspectors"
+code_column_width <- 760
 
-code_column_width = 760
-
-code_row_height = 100
+code_row_height <- 100

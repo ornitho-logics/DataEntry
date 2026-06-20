@@ -1,5 +1,5 @@
 Package: DataEntry
-Version: 2026.0.0.3
+Version: 2026.0.0.4
 Author: Mihai Valcu
 Maintainer: Mihai Valcu <Mihai.Valcu@bi.mpg.de>
 Title: Shiny Data Entry Interfaces for Database Tables
@@ -24,7 +24,6 @@ Imports:
     shinyjqui,
     stringr,
     tableHTML,
-    ini,
     unix,
     utils
 Suggests:

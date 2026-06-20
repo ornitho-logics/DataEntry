@@ -12,8 +12,6 @@ cnf_path <- system.file("database/DataTable.cnf", package = 'DataEntry')
 
 table_name <- "data_entry"
 
-db <- ini::read.ini(cnf_path)$DataEntry$database
-
 backupdir <- tempdir()
 
 n_empty_lines <- 5

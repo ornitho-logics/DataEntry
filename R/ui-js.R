@@ -45,41 +45,72 @@ js_insertMySQLTimeStamp <- function() {
 }
 
 # prevent page exit
-js_before_unload <- function(msg = "Are you done data entry?") {
+js_before_unload <- function() {
   HTML(
-    paste0(
-      '
-      <script>
-       window.onbeforeunload <- function() {
-        return ',
-      shQuote(msg),
-      ';
+    "
+    <script>
+      window.DataEntryDirty = false;
+
+      function markDataEntryDirty() {
+        window.DataEntryDirty = true;
       }
-      </script>
-        '
-    )
+
+      function markDataEntryClean() {
+        window.DataEntryDirty = false;
+      }
+
+      document.addEventListener('input', markDataEntryDirty, true);
+      document.addEventListener('change', markDataEntryDirty, true);
+      document.addEventListener('paste', markDataEntryDirty, true);
+
+      document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'saveButton') {
+          markDataEntryClean();
+        }
+      }, true);
+
+      window.addEventListener('beforeunload', function(e) {
+        if (!window.DataEntryDirty) {
+          return;
+        }
+
+        e.preventDefault();
+        e.returnValue = '';
+      });
+    </script>
+    "
   )
 }
 
 # add tooltips to a handsontable
 # works on a data frame with two columns, one colum containing the fields of the table
 # and one column containing the description of the fields.
+
 js_hot_tippy_header <- function(x, tippy_column) {
-  x <- cbind(loc = glue::glue("[,{1:nrow(x)}]"), x)
-  jj <- jsonlite::toJSON(x, auto_unbox = TRUE)
+  jj <- jsonlite::toJSON(x, auto_unbox = TRUE, na = "null")
 
   js_code <- glue::glue(
     "function(i, TH) {{
   var titleLookup = {jj};
+
   if (TH._tippy) {{
     TH._tippy.destroy();
   }}
-  if (i >= 0) {{
-    tippy(TH, {{
-      content: titleLookup[i]['{tippy_column}'],
-      allowHTML: true
-    }});
+
+  if (i < 0 || !titleLookup[i]) {{
+    return;
   }}
+
+  var content = titleLookup[i]['{tippy_column}'];
+
+  if (!content) {{
+    return;
+  }}
+
+  tippy(TH, {{
+    content: content,
+    allowHTML: true
+  }});
 }}"
   )
 

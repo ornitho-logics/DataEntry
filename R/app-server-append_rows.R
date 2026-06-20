@@ -87,6 +87,8 @@ server_append_rows <- function(input, output, session) {
       row.names = FALSE
     )
 
+    runjs("window.DataEntryDirty = false;")
+
     validation_panel$open(FALSE)
 
     disable("saveButton")

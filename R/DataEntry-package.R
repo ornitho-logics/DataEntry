@@ -20,7 +20,6 @@
 #' @importFrom shinyjqui jqui_draggable
 #' @importFrom stringr str_detect str_squish str_trunc
 #' @importFrom tableHTML tableHTML
-#' @importFrom ini read.ini
 #' @importFrom utils globalVariables packageVersion
 #' @importFrom unix eval_safe
 #'

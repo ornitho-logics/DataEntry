@@ -94,6 +94,8 @@ server_edit_table <- function(input, output, session) {
       return(invisible(FALSE))
     }
 
+    runjs("window.DataEntryDirty = false;")
+
     rv_data(
       hot_db_table(
         n_empty = n_empty_lines,

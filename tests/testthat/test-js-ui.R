@@ -9,15 +9,17 @@ test_that("dataentry_deps registers expected html dependencies", {
 })
 
 test_that("javascript helper functions return html fragments with expected content", {
-  ts <- as.character(js_insertMySQLTimeStamp())
-  unload <- as.character(js_before_unload("Leave?"))
-
+  ts = as.character(js_insertMySQLTimeStamp())
+  unload = as.character(js_before_unload())
+  
   expect_match(ts, "keyup", fixed = TRUE)
   expect_match(ts, "toISOString", fixed = TRUE)
   expect_match(ts, "val.slice(0, -2)", fixed = TRUE)
-
-  expect_match(unload, "window.onbeforeunload", fixed = TRUE)
-  expect_match(unload, "Leave?", fixed = TRUE)
+  
+  expect_match(unload, "DataEntryDirty", fixed = TRUE)
+  expect_match(unload, "beforeunload", fixed = TRUE)
+  expect_match(unload, "preventDefault", fixed = TRUE)
+  expect_match(unload, "returnValue", fixed = TRUE)
 })
 
 test_that("js_hot_tippy_header returns JavaScript containing tooltip lookup data", {
@@ -80,18 +82,39 @@ test_that("ui_edit_inspectors hides the validation toggle", {
 })
 
 test_that("ui_append_rows renders the table output, issues panel placeholder, and ShinyJS support UI", {
-  tags <- htmltools::renderTags(
+  tags = htmltools::renderTags(
     ui_append_rows(table_name = "data_entry")
   )
-
-  html <- tags$html
-
+  
+  html = tags$html
+  
   expect_match(html, 'id="table"', fixed = TRUE)
   expect_match(html, 'id="saveButton"', fixed = TRUE)
   expect_match(html, 'id="invalid_entries_panel"', fixed = TRUE)
-
+  
   expect_no_match(html, 'id="run_save"', fixed = TRUE)
-
+  
   expect_match(html, "toISOString", fixed = TRUE)
-  expect_match(html, "window.onbeforeunload", fixed = TRUE)
+  expect_match(html, "beforeunload", fixed = TRUE)
+  expect_match(html, "DataEntryDirty", fixed = TRUE)
+})
+
+
+test_that("js_hot_tippy_header tolerates missing tooltip rows", {
+  comments <- data.frame(
+    Column = "name",
+    description = "Your full name."
+  )
+
+  out <- as.character(js_hot_tippy_header(comments, "description"))
+
+  expect_match(out, "if (i < 0 || !titleLookup[i])", fixed = TRUE)
+  expect_match(out, "return;", fixed = TRUE)
+  expect_match(
+    out,
+    "var content = titleLookup[i]['description'];",
+    fixed = TRUE
+  )
+  expect_match(out, "if (!content)", fixed = TRUE)
+  expect_match(out, "tippy", fixed = TRUE)
 })
