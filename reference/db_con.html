@@ -50,7 +50,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">db_con</span><span class="op">(</span>.cnf <span class="op">=</span> <span class="cn">NULL</span>, group <span class="op">=</span> <span class="st">"DataEntry"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">db_con</span><span class="op">(</span>.cnf <span class="op">=</span> <span class="cn">NULL</span>, group <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -58,11 +58,13 @@
 
 
 <dl><dt id="arg--cnf">.cnf<a class="anchor" aria-label="anchor" href="#arg--cnf"></a></dt>
-<dd><p>Path to a MariaDB option file.</p></dd>
+<dd><p>Path to a MariaDB option file. If <code>NULL</code>, resolved from
+<code>cnf_path</code> or <code>DATAENTRY_CNF</code>.</p></dd>
 
 
 <dt id="arg-group">group<a class="anchor" aria-label="anchor" href="#arg-group"></a></dt>
-<dd><p>Option group in <code>.cnf</code>.</p></dd>
+<dd><p>Option group in <code>.cnf</code>. If <code>NULL</code>, resolved from
+global <code>group</code> or <code>"DataEntry"</code>.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -71,9 +73,13 @@
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>If <code>.cnf</code> is not supplied, <code>db_con()</code> first looks for <code>cnf_path</code> in the global
-environment, then for the <code>DATAENTRY_CNF</code> environment variable. The option
-file is read with the <code>DataEntry</code> group by default.</p>
+    <p>If <code>.cnf</code> is <code>NULL</code>, <code>db_con()</code> first looks for <code>cnf_path</code> in the global
+environment, then for the <code>DATAENTRY_CNF</code> environment variable.</p>
+<p>If <code>group</code> is <code>NULL</code>, <code>db_con()</code> first looks for <code>group</code> in the global
+environment, then uses <code>"DataEntry"</code>.</p>
+<p>Once the environment variable is set, this lets
+app-level <code>global.R</code> files set only:</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="va">group</span> <span class="op">=</span> <span class="st">"DataEntry"</span></span></code></pre><p></p></div>
     </div>
 
   </div>
