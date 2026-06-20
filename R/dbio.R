@@ -2,18 +2,30 @@
 #'
 #' Creates a MariaDB connection from an option file.
 #'
-#' If `.cnf` is not supplied, `db_con()` first looks for `cnf_path` in the global
-#' environment, then for the `DATAENTRY_CNF` environment variable. The option
-#' file is read with the `DataEntry` group by default.
+#' If `.cnf` is `NULL`, `db_con()` first looks for `cnf_path` in the global
+#' environment, then for the `DATAENTRY_CNF` environment variable.
 #'
-#' @param .cnf Path to a MariaDB option file.
-#' @param group Option group in `.cnf`.
+#' If `group` is `NULL`, `db_con()` first looks for `group` in the global
+#' environment, then uses `"DataEntry"`.
+#'
+#' Once the environment variable is set, this lets
+#' app-level `global.R` files set only:
+#'
+#' ```r
+#' group = "DataEntry"
+#' ```
+#'
+#'
+#' @param .cnf Path to a MariaDB option file. If `NULL`, resolved from
+#'   `cnf_path` or `DATAENTRY_CNF`.
+#' @param group Option group in `.cnf`. If `NULL`, resolved from
+#' global `group` or `"DataEntry"`.
 #'
 #' @return A MariaDB connection.
 #' @export
 db_con <- function(
 	.cnf = NULL,
-	group = "DataEntry"
+	group = NULL
 ) {
 	if (is.null(.cnf)) {
 		if (exists("cnf_path", envir = .GlobalEnv, inherits = FALSE)) {
@@ -30,13 +42,27 @@ db_con <- function(
 		)
 	}
 
+	if (is.null(group)) {
+		if (exists("group", envir = .GlobalEnv, inherits = FALSE)) {
+			group <- get("group", envir = .GlobalEnv)
+		} else {
+			group <- "DataEntry"
+		}
+	}
+
+	if (!nzchar(group)) {
+		stop(
+			"`group` must be a non-empty string.",
+			call. = FALSE
+		)
+	}
+
 	DBI::dbConnect(
 		drv = RMariaDB::MariaDB(),
 		default.file = path.expand(.cnf),
 		group = group
 	)
 }
-
 
 #' Run a MariaDB query and return a data.table
 #'

@@ -4,12 +4,14 @@
 \alias{db_con}
 \title{Create a MariaDB connection}
 \usage{
-db_con(.cnf = NULL, group = "DataEntry")
+db_con(.cnf = NULL, group = NULL)
 }
 \arguments{
-\item{.cnf}{Path to a MariaDB option file.}
+\item{.cnf}{Path to a MariaDB option file. If \code{NULL}, resolved from
+\code{cnf_path} or \code{DATAENTRY_CNF}.}
 
-\item{group}{Option group in \code{.cnf}.}
+\item{group}{Option group in \code{.cnf}. If \code{NULL}, resolved from
+global \code{group} or \code{"DataEntry"}.}
 }
 \value{
 A MariaDB connection.
@@ -18,7 +20,15 @@ A MariaDB connection.
 Creates a MariaDB connection from an option file.
 }
 \details{
-If \code{.cnf} is not supplied, \code{db_con()} first looks for \code{cnf_path} in the global
-environment, then for the \code{DATAENTRY_CNF} environment variable. The option
-file is read with the \code{DataEntry} group by default.
+If \code{.cnf} is \code{NULL}, \code{db_con()} first looks for \code{cnf_path} in the global
+environment, then for the \code{DATAENTRY_CNF} environment variable.
+
+If \code{group} is \code{NULL}, \code{db_con()} first looks for \code{group} in the global
+environment, then uses \code{"DataEntry"}.
+
+Once the environment variable is set, this lets
+app-level \code{global.R} files set only:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{group = "DataEntry"
+}\if{html}{\out{</div>}}
 }
