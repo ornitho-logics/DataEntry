@@ -159,13 +159,31 @@ save_backup <- function(
   x,
   name,
   backup_dir,
-  db = get("db", envir = .GlobalEnv)
+  db = NULL
 ) {
-  sub_dir <- fs::path(backup_dir, db)
+  if (is.null(db)) {
+    db <- tryCatch(
+      {
+        con <- db_con()
+        on.exit(DBI::dbDisconnect(con), add = TRUE)
 
-  fs::dir_create(sub_dir, recurse = TRUE)
+        DBI::dbGetQuery(con, "SELECT DATABASE() AS db")$db[[1]]
+      },
+      error = function(e) {
+        NULL
+      }
+    )
+  }
 
-  backup_filename <- fs::path(
+  if (is.null(db) || is.na(db) || !nzchar(db)) {
+    db <- "database"
+  }
+
+  sub_dir <- path(backup_dir, db)
+
+  dir_create(sub_dir, recurse = TRUE)
+
+  backup_filename <- path(
     sub_dir,
     glue::glue("backup_{db}_{name}_{format(Sys.time(), '%Y%m%d_%H%M%S')}.csv")
   )
@@ -174,7 +192,6 @@ save_backup <- function(
 
   backup_filename
 }
-
 
 table_has_nov <- function(table) {
   glue::glue("SHOW COLUMNS FROM {table} LIKE 'nov';") |>

@@ -70,3 +70,66 @@ test_that("emptyFrame supports preFilled and colorder against MariaDB", {
   expect_true(all(c("ID", "sex", "nest") %in% names(out)))
   expect_equal(out$datetime_, rep(as.character(Sys.Date()), nrow(out)))
 })
+
+test_that("save_backup uses active database name when db is not supplied", {
+  backup_dir <- withr::local_tempdir()
+
+  local_mocked_bindings(
+    db_con = function(...) structure(list(), class = "DBIConnection"),
+    .package = "DataEntry"
+  )
+
+  local_mocked_bindings(
+    dbGetQuery = function(conn, statement, ...) {
+      expect_equal(statement, "SELECT DATABASE() AS db")
+      data.frame(db = "active_db")
+    },
+    dbDisconnect = function(conn, ...) TRUE,
+    .package = "DBI"
+  )
+
+  path <- save_backup(
+    x = data.table(a = 1),
+    name = "inspectors",
+    backup_dir = backup_dir
+  )
+
+  expect_true(file.exists(path))
+
+  expect_equal(
+    dirname(path),
+    as.character(fs::path(backup_dir, "active_db"))
+  )
+
+  expect_match(
+    basename(path),
+    "^backup_active_db_inspectors_[0-9]{8}_[0-9]{6}\\.csv$"
+  )
+})
+
+test_that("save_backup falls back when active database name cannot be resolved", {
+  backup_dir <- withr::local_tempdir()
+
+  local_mocked_bindings(
+    db_con = function(...) stop("no connection"),
+    .package = "DataEntry"
+  )
+
+  path <- save_backup(
+    x = data.table(a = 1),
+    name = "inspectors",
+    backup_dir = backup_dir
+  )
+
+  expect_true(file.exists(path))
+
+  expect_equal(
+    dirname(path),
+    as.character(fs::path(backup_dir, "database"))
+  )
+
+  expect_match(
+    basename(path),
+    "^backup_database_inspectors_[0-9]{8}_[0-9]{6}\\.csv$"
+  )
+})
