@@ -28,6 +28,7 @@ Imports:
     utils
 Suggests:
     pkgdown,
+    quarto,
     testthat,
     withr
 URL: https://ornitho-logics.github.io/DataEntry/
