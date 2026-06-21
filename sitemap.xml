@@ -1,5 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://mpio-be.github.io/DataEntry/404.html</loc></url>
+<url><loc>https://mpio-be.github.io/DataEntry/articles/index.html</loc></url>
+<url><loc>https://mpio-be.github.io/DataEntry/articles/writing-validators.html</loc></url>
 <url><loc>https://mpio-be.github.io/DataEntry/authors.html</loc></url>
 <url><loc>https://mpio-be.github.io/DataEntry/index.html</loc></url>
 <url><loc>https://mpio-be.github.io/DataEntry/reference/DataEntry-package.html</loc></url>
@@ -7,7 +9,9 @@
 <url><loc>https://mpio-be.github.io/DataEntry/reference/dataentry_ui.html</loc></url>
 <url><loc>https://mpio-be.github.io/DataEntry/reference/db_con.html</loc></url>
 <url><loc>https://mpio-be.github.io/DataEntry/reference/db_get.html</loc></url>
+<url><loc>https://mpio-be.github.io/DataEntry/reference/evalidators.html</loc></url>
 <url><loc>https://mpio-be.github.io/DataEntry/reference/index.html</loc></url>
+<url><loc>https://mpio-be.github.io/DataEntry/reference/try_validator.html</loc></url>
 <url><loc>https://mpio-be.github.io/DataEntry/reference/validators.html</loc></url>
 </urlset>
 

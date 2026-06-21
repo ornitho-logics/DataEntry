@@ -1,5 +1,13 @@
 ## DataEntry: Data Entry interfaces.
 
+[![pkgdown](https://github.com/ornitho-logics/DataEntry/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/ornitho-logics/DataEntry/actions/workflows/pkgdown.yaml)
+[![GitHub
+version](https://img.shields.io/github/r-package/v/ornitho-logics/DataEntry?label=version)](https://github.com/ornitho-logics/DataEntry)
+[![License: GPL \>=
+3](https://img.shields.io/badge/license-GPL%20%3E%3D%203-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![GitHub last
+commit](https://img.shields.io/github/last-commit/ornitho-logics/DataEntry)](https://github.com/ornitho-logics/DataEntry/commits/main)
+
 The data entry backend is a `MariaDB` database so more people can enter
 data simultaneously. The frontends are UI-s (one per table) based on
 [shiny](https://cran.r-project.org/package=shiny) and

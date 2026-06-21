@@ -38,3 +38,9 @@
   :
 
        data validators 
+
+- [`try_validator()`](https://mpio-be.github.io/DataEntry/reference/try_validator.md)
+  : Evaluate a validator safely
+
+- [`evalidators()`](https://mpio-be.github.io/DataEntry/reference/evalidators.md)
+  : Combine validator outputs

@@ -7,10 +7,6 @@ front-end data validation.
 
 Useful links:
 
-- <https://mpio-be.github.io/DataEntry/>
-
-- <https://github.com/mpio-be/DataEntry>
-
 - <https://ornitho-logics.github.io/DataEntry/>
 
-- Report bugs at <https://github.com/mpio-be/DataEntry/issues>
+- Report bugs at <https://github.com/ornitho-logics/DataEntry/issues>
