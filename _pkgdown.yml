@@ -1,8 +1,8 @@
 url: https://mpio-be.github.io/DataEntry/
 
 template:
-  params:
-    bootswatch: flatly
+  bootstrap: 5
+  bootswatch: flatly
 
 navbar:
   structure:
@@ -19,6 +19,12 @@ home:
           * [Browse source code](https://github.com/mpio-be/DataEntry)
           * [Report a bug](https://github.com/mpio-be/DataEntry/issues)
 
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - matches(".*")
+
 reference:
 - title: Apps
   contents:
@@ -28,10 +34,14 @@ reference:
   - server_append_rows
   - server_edit_table
   - server_edit_inspectors
+
 - title: Database
   contents:
   - db_con
   - db_get
+
 - title: Validation
   contents:
   - validators
+  - try_validator
+  - evalidators

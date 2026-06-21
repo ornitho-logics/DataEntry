@@ -60,6 +60,37 @@ inspector_from_text <- function(inspector) {
   }
 }
 
+
+#' Evaluate a validator safely
+#'
+#' `try_validator()` evaluates a validator call and always returns a
+#' validator-shaped object. If the validator errors, or if it returns an object
+#' that does not contain `rowid`, `variable`, and `reason`, the error is
+#' converted to a single validation issue.
+#'
+#' This is useful inside inspectors, where one broken validator should be
+#' reported to the user instead of stopping the whole validation step.
+#'
+#' @param ... A validator expression to evaluate.
+#' @param nam A short name used in the error message if the validator fails.
+#'
+#' @return A `data.frame`, `data.table`, or similar object with at least
+#'   `rowid`, `variable`, and `reason`.
+#'
+#' @examples
+#' x = data.table::data.table(a = c(1, NA))
+#'
+#' try_validator(
+#'   is.na_validator(x),
+#'   nam = "mandatory"
+#' )
+#'
+#' try_validator(
+#'   stop("broken validator"),
+#'   nam = "broken"
+#' )
+#'
+#' @export
 try_validator <- function(..., nam = "") {
   ev <- try(..., silent = TRUE)
 
@@ -89,7 +120,33 @@ try_validator <- function(..., nam = "") {
   o
 }
 
-# Evaluate Validators safely
+#' Combine validator outputs
+#'
+#' `evalidators()` combines the output of several validators into the format
+#' used by DataEntry inspectors. Rows with the same `variable` and `reason` are
+#' grouped together, and their `rowid` values are collapsed into a comma-separated
+#' string.
+#'
+#' If the validator outputs cannot be combined, `evalidators()` returns a
+#' validator-shaped error explaining that the inspector failed.
+#'
+#' @param L A list of validator outputs. Each element should contain at least
+#'   `rowid`, `variable`, and `reason`.
+#'
+#' @return A `data.table` with columns `variable`, `reason`, and `rowid` when
+#'   validation succeeds. If validation fails, a `data.frame` with `rowid`,
+#'   `variable`, and `reason`.
+#'
+#' @examples
+#' L = list(
+#'   data.table::data.table(rowid = c(1, 2), variable = "a", reason = "missing"),
+#'   data.table::data.table(rowid = 3, variable = "a", reason = "missing"),
+#'   data.table::data.table(rowid = 2, variable = "b", reason = "invalid")
+#' )
+#'
+#' evalidators(L)
+#'
+#' @export
 evalidators <- function(L) {
   o <- try(rbindlist(L, fill = TRUE), silent = TRUE)
 
