@@ -8,7 +8,11 @@ into a comma-separated string.
 ## Usage
 
 ``` r
-evalidators(L)
+evalidators(
+  L,
+  msg =
+    "Inspector validation failed. Open the inspectors table and check the inspector definition."
+)
 ```
 
 ## Arguments
@@ -17,6 +21,11 @@ evalidators(L)
 
   A list of validator outputs. Each element should contain at least
   `rowid`, `variable`, and `reason`.
+
+- msg:
+
+  Fallback validation message used when validator outputs cannot be
+  combined or do not contain `rowid`, `variable`, and `reason`.
 
 ## Value
 
