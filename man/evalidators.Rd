@@ -4,11 +4,18 @@
 \alias{evalidators}
 \title{Combine validator outputs}
 \usage{
-evalidators(L)
+evalidators(
+  L,
+  msg =
+    "Inspector validation failed. Open the inspectors table and check the inspector definition."
+)
 }
 \arguments{
 \item{L}{A list of validator outputs. Each element should contain at least
 \code{rowid}, \code{variable}, and \code{reason}.}
+
+\item{msg}{Fallback validation message used when validator outputs cannot be
+combined or do not contain \code{rowid}, \code{variable}, and \code{reason}.}
 }
 \value{
 A \code{data.table} with columns \code{variable}, \code{reason}, and \code{rowid} when

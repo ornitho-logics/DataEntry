@@ -164,3 +164,16 @@ test_that("inspector_loader returns an empty inspector when inspectors table is 
   expect_type(inspector, "closure")
   expect_equal(inspector(data.table(a = 1)), list())
 })
+
+
+test_that("evalidators uses custom fallback message", {
+  out <- evalidators(
+    list(data.table(a = 1)),
+    msg = "custom validation failure"
+  )
+
+  expect_named(out, c("rowid", "variable", "reason"))
+  expect_true(is.na(out$rowid))
+  expect_true(is.na(out$variable))
+  expect_equal(out$reason, "custom validation failure")
+})

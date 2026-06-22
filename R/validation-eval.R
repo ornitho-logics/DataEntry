@@ -133,6 +133,9 @@ try_validator <- function(..., nam = "") {
 #' @param L A list of validator outputs. Each element should contain at least
 #'   `rowid`, `variable`, and `reason`.
 #'
+#' @param msg Fallback validation message used when validator outputs cannot be
+#'   combined or do not contain `rowid`, `variable`, and `reason`.
+#'
 #' @return A `data.table` with columns `variable`, `reason`, and `rowid` when
 #'   validation succeeds. If validation fails, a `data.frame` with `rowid`,
 #'   `variable`, and `reason`.
@@ -147,7 +150,10 @@ try_validator <- function(..., nam = "") {
 #' evalidators(L)
 #'
 #' @export
-evalidators <- function(L) {
+evalidators <- function(
+  L,
+  msg = "Inspector validation failed. Open the inspectors table and check the inspector definition."
+) {
   o <- try(rbindlist(L, fill = TRUE), silent = TRUE)
 
   if (all(c("rowid", "variable", "reason") %in% names(o))) {
@@ -156,7 +162,7 @@ evalidators <- function(L) {
     o <- data.frame(
       rowid = NA,
       variable = NA,
-      reason = "Inspector validation failed. Open the inspectors table and check the inspector definition."
+      reason = msg
     )
   }
 

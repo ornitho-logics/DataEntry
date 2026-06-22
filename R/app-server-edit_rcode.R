@@ -15,30 +15,12 @@ server_edit_rcode <- function(input, output, session) {
   fixed_rows_top <- app_global("fixed_rows_top", 0) |> as.integer()
 
   inspector_issues <- function(x) {
-    o <-
-      try(
-        list(
-          x[, c("table_name", code_column), with = FALSE] |> is.na_validator(),
-          x[, code_column, with = FALSE] |>
-            rcode_validator(column = code_column)
-        ),
-        silent = TRUE
-      )
-
-    o <- try(rbindlist(L, fill = TRUE), silent = TRUE)
-
-    if (all(c("rowid", "variable", "reason") %in% names(o))) {
-      o <- o[,
-        .(rowid = paste(rowid, collapse = ",")),
-        by = .(variable, reason)
-      ]
-    } else {
-      o <- data.frame(
-        rowid = NA,
-        variable = NA,
-        reason = "Validation failed. This is an internal error."
-      )
-    }
+    list(
+      x[, c("table_name", code_column), with = FALSE] |> is.na_validator(),
+      x[, code_column, with = FALSE] |>
+        rcode_validator(column = code_column)
+    ) |>
+      evalidators(msg = "Validation failed. This is an internal error.")
   }
 
   comments <- column_comment(
