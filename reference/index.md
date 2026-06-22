@@ -4,10 +4,10 @@
 
 - [`ui_append_rows()`](https://mpio-be.github.io/DataEntry/reference/dataentry_ui.md)
   [`ui_edit_table()`](https://mpio-be.github.io/DataEntry/reference/dataentry_ui.md)
-  [`ui_edit_inspectors()`](https://mpio-be.github.io/DataEntry/reference/dataentry_ui.md)
+  [`ui_edit_rcode()`](https://mpio-be.github.io/DataEntry/reference/dataentry_ui.md)
   : Data entry UI
 - [`server_append_rows()`](https://mpio-be.github.io/DataEntry/reference/dataentry_servers.md)
-  [`server_edit_inspectors()`](https://mpio-be.github.io/DataEntry/reference/dataentry_servers.md)
+  [`server_edit_rcode()`](https://mpio-be.github.io/DataEntry/reference/dataentry_servers.md)
   [`server_edit_table()`](https://mpio-be.github.io/DataEntry/reference/dataentry_servers.md)
   : Data entry server modules
 

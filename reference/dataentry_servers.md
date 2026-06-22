@@ -8,7 +8,7 @@ inspector definitions.
 ``` r
 server_append_rows(input, output, session)
 
-server_edit_inspectors(input, output, session)
+server_edit_rcode(input, output, session)
 
 server_edit_table(input, output, session)
 ```

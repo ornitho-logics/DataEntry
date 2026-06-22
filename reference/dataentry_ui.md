@@ -9,7 +9,7 @@ ui_append_rows(table_name = "Table Name")
 
 ui_edit_table(table_name = "Table Name")
 
-ui_edit_inspectors(table_name = "inspectors")
+ui_edit_rcode(table_name = "inspectors")
 ```
 
 ## Arguments
