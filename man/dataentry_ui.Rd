@@ -3,14 +3,14 @@
 \name{ui_append_rows}
 \alias{ui_append_rows}
 \alias{ui_edit_table}
-\alias{ui_edit_inspectors}
+\alias{ui_edit_rcode}
 \title{Data entry UI}
 \usage{
 ui_append_rows(table_name = "Table Name")
 
 ui_edit_table(table_name = "Table Name")
 
-ui_edit_inspectors(table_name = "inspectors")
+ui_edit_rcode(table_name = "inspectors")
 }
 \arguments{
 \item{table_name}{Label shown in the data-entry menu.}

@@ -1,1 +1,1 @@
-server_edit_inspectors
+server_edit_rcode

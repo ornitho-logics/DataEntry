@@ -3,14 +3,14 @@
 %   R/app-server-edit_inspectors.R, R/app-server-edit_table.R, R/app-server.R
 \name{server_append_rows}
 \alias{server_append_rows}
-\alias{server_edit_inspectors}
+\alias{server_edit_rcode}
 \alias{server_edit_table}
 \alias{dataentry_servers}
 \title{Data entry server modules}
 \usage{
 server_append_rows(input, output, session)
 
-server_edit_inspectors(input, output, session)
+server_edit_rcode(input, output, session)
 
 server_edit_table(input, output, session)
 }

@@ -2,7 +2,7 @@ Package: DataEntry
 Version: 2026.0.0.4
 Author: Mihai Valcu
 Maintainer: Mihai Valcu <Mihai.Valcu@bi.mpg.de>
-Title: Shiny Data Entry Interfaces for Database Tables
+Title: Data Entry Interfaces for Database Tables
 Description: Build Shiny applications for entering and editing database tables with rhandsontable. Provides table-specific validation, editable validation rules, database save workflows, and backup support for MariaDB-backed data entry.
 License: GPL (>= 3)
 Depends:

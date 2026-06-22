@@ -2,7 +2,7 @@
 #' @export
 #'
 #' @note See `global.R` in `inst/UI/editInspector` for required variables to set.
-server_edit_inspectors <- function(input, output, session) {
+server_edit_rcode <- function(input, output, session) {
   table_name <- app_global("table_name", "inspectors")
   backupdir <- app_global("backupdir", tempdir())
 
@@ -15,12 +15,30 @@ server_edit_inspectors <- function(input, output, session) {
   fixed_rows_top <- app_global("fixed_rows_top", 0) |> as.integer()
 
   inspector_issues <- function(x) {
-    list(
-      x[, c("table_name", code_column), with = FALSE] |> is.na_validator(),
-      x[, code_column, with = FALSE] |>
-        rcode_validator(column = code_column)
-    ) |>
-      evalidators()
+    o <-
+      try(
+        list(
+          x[, c("table_name", code_column), with = FALSE] |> is.na_validator(),
+          x[, code_column, with = FALSE] |>
+            rcode_validator(column = code_column)
+        ),
+        silent = TRUE
+      )
+
+    o <- try(rbindlist(L, fill = TRUE), silent = TRUE)
+
+    if (all(c("rowid", "variable", "reason") %in% names(o))) {
+      o <- o[,
+        .(rowid = paste(rowid, collapse = ",")),
+        by = .(variable, reason)
+      ]
+    } else {
+      o <- data.frame(
+        rowid = NA,
+        variable = NA,
+        reason = "Validation failed. This is an internal error."
+      )
+    }
   }
 
   comments <- column_comment(

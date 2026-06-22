@@ -9,13 +9,13 @@ test_that("dataentry_deps registers expected html dependencies", {
 })
 
 test_that("javascript helper functions return html fragments with expected content", {
-  ts = as.character(js_insertMySQLTimeStamp())
-  unload = as.character(js_before_unload())
-  
+  ts <- as.character(js_insertMySQLTimeStamp())
+  unload <- as.character(js_before_unload())
+
   expect_match(ts, "keyup", fixed = TRUE)
   expect_match(ts, "toISOString", fixed = TRUE)
   expect_match(ts, "val.slice(0, -2)", fixed = TRUE)
-  
+
   expect_match(unload, "DataEntryDirty", fixed = TRUE)
   expect_match(unload, "beforeunload", fixed = TRUE)
   expect_match(unload, "preventDefault", fixed = TRUE)
@@ -70,9 +70,9 @@ test_that("ui_edit_table renders the table output and menu", {
   expect_match(html, "data_entry", fixed = TRUE)
 })
 
-test_that("ui_edit_inspectors hides the validation toggle", {
+test_that("ui_edit_rcode hides the validation toggle", {
   html <- htmltools::renderTags(
-    ui_edit_inspectors(table_name = "inspectors")
+    ui_edit_rcode(table_name = "inspectors")
   )$html
 
   expect_match(html, "table", fixed = TRUE)
@@ -82,18 +82,18 @@ test_that("ui_edit_inspectors hides the validation toggle", {
 })
 
 test_that("ui_append_rows renders the table output, issues panel placeholder, and ShinyJS support UI", {
-  tags = htmltools::renderTags(
+  tags <- htmltools::renderTags(
     ui_append_rows(table_name = "data_entry")
   )
-  
-  html = tags$html
-  
+
+  html <- tags$html
+
   expect_match(html, 'id="table"', fixed = TRUE)
   expect_match(html, 'id="saveButton"', fixed = TRUE)
   expect_match(html, 'id="invalid_entries_panel"', fixed = TRUE)
-  
+
   expect_no_match(html, 'id="run_save"', fixed = TRUE)
-  
+
   expect_match(html, "toISOString", fixed = TRUE)
   expect_match(html, "beforeunload", fixed = TRUE)
   expect_match(html, "DataEntryDirty", fixed = TRUE)

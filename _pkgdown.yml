@@ -30,10 +30,10 @@ reference:
   contents:
   - ui_append_rows
   - ui_edit_table
-  - ui_edit_inspectors
+  - ui_edit_rcode
   - server_append_rows
   - server_edit_table
-  - server_edit_inspectors
+  - server_edit_rcode
 
 - title: Database
   contents:

@@ -22,7 +22,7 @@ ui_edit_table <- function(table_name = "Table Name") {
 
 #' @rdname dataentry_ui
 #' @export
-ui_edit_inspectors <- function(table_name = "inspectors") {
+ui_edit_rcode <- function(table_name = "inspectors") {
   .data_entry_ui(
     table_name = table_name,
     show_validation = FALSE
