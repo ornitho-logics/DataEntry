@@ -76,3 +76,21 @@ list(
     )
 )
 ', 'any notes');
+
+
+
+DROP TABLE IF EXISTS artifacts; 
+CREATE TABLE IF NOT EXISTS artifacts (
+  artifact_name varchar(128) NOT NULL
+    COMMENT 'An identifier for the r-code',
+
+  artifact longtext NULL
+    COMMENT '<strong>Artifact content</strong><br>Saved artifact content. This can be any R code',
+
+  comments text NULL
+    COMMENT 'Optional notes about this artifact',
+
+  updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (artifact_name)
+);

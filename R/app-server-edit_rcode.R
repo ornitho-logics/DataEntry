@@ -6,6 +6,7 @@ server_edit_rcode <- function(input, output, session) {
   table_name <- app_global("table_name", "inspectors")
   code_column <- app_global("code_column", "inspector")
   backupdir <- app_global("backupdir", tempdir())
+  id_column <- app_global("id_column", "table_name")
 
   exclude_columns <- app_global("exclude_columns", character())
 
@@ -16,7 +17,8 @@ server_edit_rcode <- function(input, output, session) {
 
   inspector_issues <- function(x) {
     list(
-      x[, c("table_name", code_column), with = FALSE] |> is.na_validator(),
+      x[, c(id_column, code_column), with = FALSE] |>
+        is.na_validator(),
       x[, code_column, with = FALSE] |>
         rcode_validator(column = code_column)
     ) |>
