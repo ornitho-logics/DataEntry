@@ -4,12 +4,12 @@
 #' @note See `global.R` in `inst/UI/editInspector` for required variables to set.
 server_edit_rcode <- function(input, output, session) {
   table_name <- app_global("table_name", "inspectors")
+  code_column <- app_global("code_column", "inspector")
   backupdir <- app_global("backupdir", tempdir())
 
   exclude_columns <- app_global("exclude_columns", character())
 
   n_empty_lines <- app_global("n_empty_lines", 2) |> as.integer()
-  code_column <- app_global("code_column", "inspector")
   code_column_width <- app_global("code_column_width", 760) |> as.integer()
   code_row_height <- app_global("code_row_height", 100) |> as.integer()
   fixed_rows_top <- app_global("fixed_rows_top", 0) |> as.integer()

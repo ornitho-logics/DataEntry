@@ -6,13 +6,15 @@ local_dataentry_cnf <- function() {
   skip_if(cnf == "", "DataTable.cnf not installed with package")
 
   withr::local_envvar(
-    DATAENTRY_CNF = cnf,
-    DATAENTRY_GROUP = "DataEntry"
+    DATAENTRY_CNF = cnf
+  )
+
+  withr::local_options(
+    DataEntry.group = "DataEntry"
   )
 
   cnf
 }
-
 test_that("db_con opens a MariaDB connection from package cnf", {
   skip_if_not_installed("RMariaDB")
 
