@@ -58,8 +58,49 @@
 <p>The user can bypass the data validation. However the entries saved without validation are flagged in the database and the user is encouraged to explain why the validation was ignored. The aim is to make questionable data visible and traceable, not to silently discard observations that may be real.</p>
 </div>
 <div class="section level2">
-<h2 id="the-package-includes-three-shiny-apps">The package includes three Shiny apps:<a class="anchor" aria-label="anchor" href="#the-package-includes-three-shiny-apps"></a>
+<h2 id="the-package-includes-four-shiny-app-types">The package includes four Shiny app types:<a class="anchor" aria-label="anchor" href="#the-package-includes-four-shiny-app-types"></a>
 </h2>
+<table class="table">
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+</colgroup>
+<thead><tr>
+<th>App type</th>
+<th>UI function</th>
+<th>Server function</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>newData</code></td>
+<td><code><a href="reference/dataentry_ui.html">ui_append_rows()</a></code></td>
+<td><code><a href="reference/dataentry_servers.html">server_append_rows()</a></code></td>
+<td>Opens an empty table-specific data entry form. New rows are checked with the inspector for that table before they are appended to the database.</td>
+</tr>
+<tr>
+<td><code>editData</code></td>
+<td><code><a href="reference/dataentry_ui.html">ui_edit_table()</a></code></td>
+<td><code><a href="reference/dataentry_servers.html">server_edit_table()</a></code></td>
+<td>Loads existing rows from a database table, lets the user edit them, and runs the same validation workflow before saving changes back to the database.</td>
+</tr>
+<tr>
+<td><code>editInspector</code></td>
+<td><code><a href="reference/dataentry_ui.html">ui_edit_rcode()</a></code></td>
+<td><code><a href="reference/dataentry_servers.html">server_edit_rcode()</a></code></td>
+<td>A special <code>editRcode</code> setup linked to the <code>inspectors</code> table. Each row stores validation R code that is later loaded by another app to check a database table.</td>
+</tr>
+<tr>
+<td><code>editRcode</code></td>
+<td><code><a href="reference/dataentry_ui.html">ui_edit_rcode()</a></code></td>
+<td><code><a href="reference/dataentry_servers.html">server_edit_rcode()</a></code></td>
+<td>A general app type for editing R code stored in a database table. When it is not linked to the <code>inspectors</code> table, the table can be used to store R code artefacts that can later be loaded and used by another app.</td>
+</tr>
+</tbody>
+</table>
+<p>Each app is available for testing within the package</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span></span>
@@ -74,6 +115,11 @@
 <span></span>
 <span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"UI"</span>, <span class="st">"editInspector"</span>, package <span class="op">=</span> <span class="st">"DataEntry"</span><span class="op">)</span>,</span>
+<span>  launch.browser <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"UI"</span>, <span class="st">"editRcode"</span>, package <span class="op">=</span> <span class="st">"DataEntry"</span><span class="op">)</span>,</span>
 <span>  launch.browser <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>These apps expect the test database configured by:</p>

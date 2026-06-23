@@ -29,7 +29,16 @@ encouraged to explain why the validation was ignored. The aim is to make
 questionable data visible and traceable, not to silently discard
 observations that may be real.
 
-## The package includes three Shiny apps:
+## The package includes four Shiny app types:
+
+| App type | UI function | Server function | Description |
+|----|----|----|----|
+| `newData` | [`ui_append_rows()`](https://mpio-be.github.io/DataEntry/reference/dataentry_ui.md) | [`server_append_rows()`](https://mpio-be.github.io/DataEntry/reference/dataentry_servers.md) | Opens an empty table-specific data entry form. New rows are checked with the inspector for that table before they are appended to the database. |
+| `editData` | [`ui_edit_table()`](https://mpio-be.github.io/DataEntry/reference/dataentry_ui.md) | [`server_edit_table()`](https://mpio-be.github.io/DataEntry/reference/dataentry_servers.md) | Loads existing rows from a database table, lets the user edit them, and runs the same validation workflow before saving changes back to the database. |
+| `editInspector` | [`ui_edit_rcode()`](https://mpio-be.github.io/DataEntry/reference/dataentry_ui.md) | [`server_edit_rcode()`](https://mpio-be.github.io/DataEntry/reference/dataentry_servers.md) | A special `editRcode` setup linked to the `inspectors` table. Each row stores validation R code that is later loaded by another app to check a database table. |
+| `editRcode` | [`ui_edit_rcode()`](https://mpio-be.github.io/DataEntry/reference/dataentry_ui.md) | [`server_edit_rcode()`](https://mpio-be.github.io/DataEntry/reference/dataentry_servers.md) | A general app type for editing R code stored in a database table. When it is not linked to the `inspectors` table, the table can be used to store R code artefacts that can later be loaded and used by another app. |
+
+Each app is available for testing within the package
 
 ``` r
 
@@ -46,6 +55,11 @@ shiny::runApp(
 
 shiny::runApp(
   system.file("UI", "editInspector", package = "DataEntry"),
+  launch.browser = TRUE
+)
+
+shiny::runApp(
+  system.file("UI", "editRcode", package = "DataEntry"),
   launch.browser = TRUE
 )
 ```
