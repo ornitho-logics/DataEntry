@@ -43,6 +43,9 @@ server_edit_table <- function(input, output, session) {
       rhandsontable(
         x,
         rowHeaders = TRUE,
+        autoRowSize = FALSE,
+        wordWrap = FALSE,
+        textEllipsis = TRUE,
         afterGetColHeader = js_hot_tippy_header(comments, "description")
       ) |>
       hot_cols(

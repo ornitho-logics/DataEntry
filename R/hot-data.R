@@ -184,6 +184,10 @@ hot_append_table <- function(
   out <-
     x |>
     rhandsontable(
+      rowHeaders = TRUE,
+      autoRowSize = FALSE,
+      wordWrap = FALSE,
+      textEllipsis = TRUE,
       enterMoves = list(row = 1, col = 0),
       afterGetColHeader = js_hot_tippy_header(comments, "description")
     ) |>
