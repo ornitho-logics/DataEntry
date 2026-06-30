@@ -88,11 +88,21 @@ db_get <- function(query, ..., params = NULL) {
 }
 
 append_db_table <- function(x, table_name) {
-	con <- db_con()
-	on.exit(DBI::dbDisconnect(con), add = TRUE)
+	con <- NULL
 
 	tryCatch(
 		{
+			con <- db_con()
+
+			on.exit(
+				{
+					if (!is.null(con)) {
+						try(DBI::dbDisconnect(con), silent = TRUE)
+					}
+				},
+				add = TRUE
+			)
+
 			DBI::dbWriteTable(
 				con,
 				table_name,
@@ -101,11 +111,22 @@ append_db_table <- function(x, table_name) {
 				row.names = FALSE
 			)
 
-			TRUE
+			list(
+				ok = TRUE,
+				error = NULL,
+				message = NULL
+			)
 		},
 		error = function(e) {
-			message("DataEntry append failed: ", conditionMessage(e))
-			FALSE
+			msg <- conditionMessage(e)
+
+			message("DataEntry append failed: ", msg)
+
+			list(
+				ok = FALSE,
+				error = e,
+				message = msg
+			)
 		}
 	)
 }

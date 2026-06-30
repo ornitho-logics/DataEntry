@@ -91,11 +91,6 @@ hot_db_table <- function(table, n_empty = 10, exclude_columns = character()) {
   rbind(dat, empty_rows)
 }
 
-drop_empty_hot_rows <- function(x) {
-  x[
-    !apply(x, 1, function(row) all(is.na(row) | row == "")),
-  ]
-}
 
 save_from_hot <- function(input, table, drop_empty = FALSE) {
   o <- hot_to_r(input$table) |>
@@ -110,9 +105,22 @@ save_from_hot <- function(input, table, drop_empty = FALSE) {
 
 
 drop_empty_hot_rows <- function(x) {
-  x[
-    !apply(x, 1, function(row) all(is.na(row) | row == "")),
-  ]
+  if (nrow(x) == 0L || ncol(x) == 0L) {
+    return(x)
+  }
+
+  keep <- Reduce(
+    `|`,
+    lapply(x, function(z) {
+      if (is.character(z)) {
+        !is.na(z) & nzchar(z)
+      } else {
+        !is.na(z)
+      }
+    })
+  )
+
+  x[keep]
 }
 
 
@@ -181,8 +189,7 @@ hot_append_table <- function(
     ) |>
     hot_cols(
       columnSorting = FALSE,
-      manualColumnResize = TRUE,
-      autoColumnSize = TRUE
+      manualColumnResize = TRUE
     ) |>
     hot_rows(fixedRowsTop = 1)
 

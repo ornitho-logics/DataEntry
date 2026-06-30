@@ -76,14 +76,14 @@ server_append_rows <- function(input, output, session) {
       x <- add_nov_flags(x, cc)
     }
 
-    if (!append_db_table(x, table_name)) {
+    db_save <- append_db_table(x, table_name)
+
+    if (!db_save$ok) {
       dataentry_notif(
         msg = glue(
-          "
-          <h4>Could not save rows to the DB.</h4>
-          <p>No rows were written to <code>{table_name}</code>.</p>
-          <p>Likely, the data definition in the database or the constraints did not match the entered data.</p>
-        "
+          "<h4>Could not save rows to the DB.</h4>
+       <p>No rows were written to <code>{table_name}</code>.</p>
+       <p><code>{htmltools::htmlEscape(db_save$message)}</code></p>"
         ),
         type = "error",
         duration = 30

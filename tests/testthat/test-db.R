@@ -170,7 +170,9 @@ test_that("append_db_table writes rows and disconnects", {
 
   out <- append_db_table(x, "data_entry")
 
-  expect_true(out)
+  expect_true(out$ok)
+  expect_null(out$error)
+  expect_null(out$message)
 
   expect_equal(calls$db_write_table$name, "data_entry")
   expect_equal(calls$db_write_table$value, x)
