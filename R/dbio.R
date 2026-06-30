@@ -147,3 +147,32 @@ inspectors_table_exists <- function() {
 		error = function(e) FALSE
 	)
 }
+
+#' @export
+prepare_for_dropdown <- function(table, column) {
+	x <- tryCatch(
+		glue("SELECT DISTINCT {column} FROM {table}") |> db_get(),
+		error = function(e) NULL
+	)
+
+	if (is.null(x) || length(x) == 0) {
+		return("??")
+	}
+
+	if (is.data.frame(x)) {
+		if (ncol(x) == 0 || nrow(x) == 0) {
+			return("??")
+		}
+
+		x <- x[[1]]
+	}
+
+	x <- as.character(x)
+	x <- x[!is.na(x) & trimws(x) != ""]
+
+	if (length(x) == 0) {
+		return("??")
+	}
+
+	x
+}
