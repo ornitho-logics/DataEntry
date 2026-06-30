@@ -76,16 +76,21 @@ server_append_rows <- function(input, output, session) {
       x <- add_nov_flags(x, cc)
     }
 
-    con <- db_con()
-    on.exit(DBI::dbDisconnect(con), add = TRUE)
+    if (!append_db_table(x, table_name)) {
+      dataentry_notif(
+        msg = glue(
+          "
+          <h4>Could not save rows to the DB.</h4>
+          <p>No rows were written to <code>{table_name}</code>.</p>
+          <p>Likely, the data definition in the database or the constraints did not match the entered data.</p>
+        "
+        ),
+        type = "error",
+        duration = 30
+      )
 
-    DBI::dbWriteTable(
-      con,
-      table_name,
-      x,
-      append = TRUE,
-      row.names = FALSE
-    )
+      return(invisible(FALSE))
+    }
 
     runjs("window.DataEntryDirty = false;")
 

@@ -135,3 +135,47 @@ test_that("save_backup falls back when active database name cannot be resolved",
     "^backup_database_inspectors_[0-9]{8}_[0-9]{6}\\.csv$"
   )
 })
+
+
+test_that("append_db_table writes rows and disconnects", {
+  calls <- new.env(parent = emptyenv())
+  calls$db_write_table <- NULL
+  calls$disconnected <- FALSE
+
+  local_mocked_bindings(
+    db_con = function(...) structure(list(), class = "DBIConnection"),
+    .package = "DataEntry"
+  )
+
+  local_mocked_bindings(
+    dbWriteTable = function(conn, name, value, append, row.names, ...) {
+      calls$db_write_table <- list(
+        conn = conn,
+        name = name,
+        value = value,
+        append = append,
+        row.names = row.names
+      )
+
+      TRUE
+    },
+    dbDisconnect = function(conn, ...) {
+      calls$disconnected <- TRUE
+      TRUE
+    },
+    .package = "DBI"
+  )
+
+  x <- data.table(a = 1:2, b = c("x", "y"))
+
+  out <- append_db_table(x, "data_entry")
+
+  expect_true(out)
+
+  expect_equal(calls$db_write_table$name, "data_entry")
+  expect_equal(calls$db_write_table$value, x)
+  expect_true(calls$db_write_table$append)
+  expect_false(calls$db_write_table$row.names)
+
+  expect_true(calls$disconnected)
+})

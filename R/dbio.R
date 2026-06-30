@@ -87,6 +87,29 @@ db_get <- function(query, ..., params = NULL) {
 		data.table::as.data.table()
 }
 
+append_db_table <- function(x, table_name) {
+	con <- db_con()
+	on.exit(DBI::dbDisconnect(con), add = TRUE)
+
+	tryCatch(
+		{
+			DBI::dbWriteTable(
+				con,
+				table_name,
+				x,
+				append = TRUE,
+				row.names = FALSE
+			)
+
+			TRUE
+		},
+		error = function(e) {
+			message("DataEntry append failed: ", conditionMessage(e))
+			FALSE
+		}
+	)
+}
+
 
 replace_db_table <- function(x, table_name, backupdir) {
 	bk_path <- save_backup(
