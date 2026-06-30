@@ -189,7 +189,9 @@ hot_append_table <- function(
     ) |>
     hot_cols(
       columnSorting = FALSE,
-      manualColumnResize = TRUE
+      colWidths = 120,
+      manualColumnResize = TRUE,
+      autoColumnSize = FALSE
     ) |>
     hot_rows(fixedRowsTop = 1)
 

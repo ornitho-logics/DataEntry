@@ -56,7 +56,9 @@ server_edit_rcode <- function(input, output, session) {
       ) |>
       hot_cols(
         columnSorting = FALSE,
+        colWidths = 120,
         manualColumnResize = TRUE,
+        autoColumnSize = FALSE,
         stretchH = "none"
       ) |>
       hot_rows(

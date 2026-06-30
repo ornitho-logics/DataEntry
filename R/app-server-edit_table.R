@@ -47,7 +47,9 @@ server_edit_table <- function(input, output, session) {
       ) |>
       hot_cols(
         columnSorting = FALSE,
+        colWidths = 120,
         manualColumnResize = TRUE,
+        autoColumnSize = FALSE,
         stretchH = "none"
       ) |>
       hot_rows(fixedRowsTop = fixed_rows_top)
