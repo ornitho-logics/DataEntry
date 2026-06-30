@@ -10,13 +10,13 @@ Source:
 [`DESCRIPTION`](https://github.com/ornitho-logics/DataEntry/blob/master/DESCRIPTION)
 
 Valcu M (2026). *DataEntry: Data Entry Interfaces for Database Tables*.
-R package version 2026.0.0.4,
+R package version 2026.0.0.5,
 <https://ornitho-logics.github.io/DataEntry/>.
 
     @Manual{,
       title = {DataEntry: Data Entry Interfaces for Database Tables},
       author = {Mihai Valcu},
       year = {2026},
-      note = {R package version 2026.0.0.4},
+      note = {R package version 2026.0.0.5},
       url = {https://ornitho-logics.github.io/DataEntry/},
     }
