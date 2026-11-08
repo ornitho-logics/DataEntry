@@ -108,13 +108,46 @@ test_that("js_hot_tippy_header tolerates missing tooltip rows", {
 
   out <- as.character(js_hot_tippy_header(comments, "description"))
 
-  expect_match(out, "if (i < 0 || !titleLookup[i])", fixed = TRUE)
+  expect_match(out, "if (i < 0)", fixed = TRUE)
+  expect_match(out, "this.getColHeader(i)", fixed = TRUE)
   expect_match(out, "return;", fixed = TRUE)
   expect_match(
     out,
-    "var content = titleLookup[i]['description'];",
+    "var content = titleLookup[column];",
     fixed = TRUE
   )
   expect_match(out, "if (!content)", fixed = TRUE)
   expect_match(out, "tippy", fixed = TRUE)
+})
+
+test_that("header tooltips follow column names and ignore missing descriptions", {
+  node <- Sys.which("node")
+  skip_if(!nzchar(node), "Node.js is required to execute tooltip JavaScript")
+
+  comments <- data.frame(
+    Column = c("id", "measure", "empty", "missing", "quoted\"name"),
+    description = c("Identifier", "Measurement", "", NA, "Quoted column")
+  )
+  callback <- as.character(js_hot_tippy_header(comments, "description"))
+  script <- tempfile(fileext = ".js")
+  on.exit(unlink(script), add = TRUE)
+  writeLines(c(
+    paste0("var callback = ", callback, ";"),
+    "var tooltips = [], destroyed = 0;",
+    "function tippy(header, options) {",
+    "  tooltips.push({column: header.column, content: options.content});",
+    "}",
+    "var columns = ['measure', 'unknown', 'id', 'empty', 'missing', 'constructor', 'quoted\"name'];",
+    "var table = {getColHeader: function(i) { return columns[i]; }};",
+    "columns.forEach(function(column, i) {",
+    "  callback.call(table, i, {column: column, _tippy: {destroy: function() { destroyed++; }}});",
+    "});",
+    "callback.call(table, -1, {});",
+    "console.log(JSON.stringify({tooltips: tooltips, destroyed: destroyed}));"
+  ), script)
+
+  out <- jsonlite::fromJSON(paste(system2(node, script, stdout = TRUE), collapse = "\n"))
+  expect_equal(out$tooltips$column, c("measure", "id", "quoted\"name"))
+  expect_equal(out$tooltips$content, c("Measurement", "Identifier", "Quoted column"))
+  expect_equal(out$destroyed, 7L)
 })

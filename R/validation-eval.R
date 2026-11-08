@@ -156,12 +156,20 @@ evalidators <- function(
 ) {
   o <- try(rbindlist(L, fill = TRUE), silent = TRUE)
 
+  if (!inherits(o, "try-error") && length(L) == 0L) {
+    return(data.table(
+      rowid = character(),
+      variable = character(),
+      reason = character()
+    ))
+  }
+
   if (all(c("rowid", "variable", "reason") %in% names(o))) {
     o <- o[, .(rowid = paste(rowid, collapse = ",")), by = .(variable, reason)]
   } else {
     o <- data.frame(
-      rowid = NA,
-      variable = NA,
+      rowid = NA_character_,
+      variable = NA_character_,
       reason = msg
     )
   }

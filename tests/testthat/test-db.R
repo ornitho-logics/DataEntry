@@ -1,5 +1,26 @@
 library(data.table)
 
+test_that("column comments are scoped to the current database and ordered", {
+  local_mocked_bindings(
+    db_get = function(query, ..., params = NULL) {
+      expect_match(query, "TABLE_SCHEMA = DATABASE()", fixed = TRUE)
+      expect_match(query, "TABLE_NAME = ?", fixed = TRUE)
+      expect_match(query, "ORDER BY ORDINAL_POSITION", fixed = TRUE)
+      expect_equal(params, list("data_entry"))
+      data.table(
+        Column = c("pk", "id", "measure"),
+        description = c("Primary key", "Identifier", "Measurement")
+      )
+    },
+    .package = "DataEntry"
+  )
+
+  out <- column_comment("data_entry")
+
+  expect_equal(out$Column, c("id", "measure"))
+  expect_equal(out$description, c("Identifier", "Measurement"))
+})
+
 local_dataentry_cnf <- function() {
   cnf <- system.file("database/DataTable.cnf", package = "DataEntry")
 

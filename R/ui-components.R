@@ -203,13 +203,12 @@ table_has_nov <- function(table) {
 
 column_comment <- function(table, exclude_columns = "pk") {
   x <- db_get(
-    query = paste0(
+    query =
       "SELECT COLUMN_NAME `Column`, COLUMN_COMMENT description FROM 
           information_schema.COLUMNS
-              WHERE TABLE_NAME = ",
-
-      shQuote(table)
-    )
+              WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?
+              ORDER BY ORDINAL_POSITION",
+    params = list(table)
   )
 
   x[!x$Column %in% exclude_columns, ]

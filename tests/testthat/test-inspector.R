@@ -163,6 +163,60 @@ test_that("inspector_loader returns an empty inspector when inspectors table is 
 
   expect_type(inspector, "closure")
   expect_equal(inspector(data.table(a = 1)), list())
+  expect_equal(nrow(validation_issues(data.table(a = 1), "data_entry")), 0L)
+})
+
+
+test_that("a table without inspector definitions has no validation issues", {
+  local_mocked_bindings(
+    inspectors_table_exists = function() TRUE,
+    db_get = function(...) data.table(inspector = character()),
+    .package = "DataEntry"
+  )
+
+  out <- validation_issues(data.table(a = 1), "data_entry")
+
+  expect_equal(nrow(out), 0L)
+  expect_setequal(names(out), c("rowid", "variable", "reason"))
+})
+
+test_that("inspector syntax and runtime errors become validation issues", {
+  for (code in c("list(", "stop('broken inspector')")) {
+    local_mocked_bindings(
+      inspectors_table_exists = function() TRUE,
+      db_get = function(...) data.table(inspector = code),
+      .package = "DataEntry"
+    )
+
+    out <- validation_issues(data.table(a = 1), "data_entry")
+
+    expect_equal(nrow(out), 1L)
+    expect_true(is.na(out$rowid))
+    expect_match(out$reason, "Inspector validation failed")
+  }
+})
+
+test_that("inspector query errors become validation issues", {
+  local_mocked_bindings(
+    inspectors_table_exists = function() TRUE,
+    db_get = function(...) stop("cannot read inspectors"),
+    .package = "DataEntry"
+  )
+
+  out <- validation_issues(data.table(a = 1), "data_entry")
+
+  expect_equal(nrow(out), 1L)
+  expect_match(out$reason, "Inspector validation failed")
+})
+
+test_that("malformed inspector output can pass through row flagging", {
+  out <- evalidators(list(data.table(a = 1)))
+
+  expect_equal(nrow(out), 1L)
+  expect_equal(
+    DataEntry:::add_nov_flags(data.table(a = 1), out),
+    data.table(a = 1, nov = 0)
+  )
 })
 
 

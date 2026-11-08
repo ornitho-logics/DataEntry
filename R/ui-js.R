@@ -87,7 +87,9 @@ js_before_unload <- function() {
 # and one column containing the description of the fields.
 
 js_hot_tippy_header <- function(x, tippy_column) {
-  jj <- jsonlite::toJSON(x, auto_unbox = TRUE, na = "null")
+  titles <- as.list(x[[tippy_column]])
+  names(titles) <- x$Column
+  jj <- jsonlite::toJSON(titles, auto_unbox = TRUE, na = "null")
 
   js_code <- glue::glue(
     "function(i, TH) {{
@@ -97,11 +99,16 @@ js_hot_tippy_header <- function(x, tippy_column) {
     TH._tippy.destroy();
   }}
 
-  if (i < 0 || !titleLookup[i]) {{
+  if (i < 0) {{
     return;
   }}
 
-  var content = titleLookup[i]['{tippy_column}'];
+  var column = this.getColHeader(i);
+  if (!Object.prototype.hasOwnProperty.call(titleLookup, column)) {{
+    return;
+  }}
+
+  var content = titleLookup[column];
 
   if (!content) {{
     return;

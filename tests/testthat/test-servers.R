@@ -20,6 +20,50 @@ mock_globals <- function(values) {
   }
 }
 
+test_that("missing inspectors allow saving and broken inspectors require an override", {
+  rows <- data.table(a = 1)
+  panel <- list(open = function(value) NULL)
+
+  testthat::local_mocked_bindings(
+    showNotification = function(...) NULL,
+    .package = "DataEntry"
+  )
+
+  testthat::local_mocked_bindings(
+    inspectors_table_exists = function() FALSE,
+    .package = "DataEntry"
+  )
+
+  missing <- DataEntry:::validate_before_save(
+    list(ignore_checks = FALSE), rows, "data_entry", panel
+  )
+  expect_true(missing$ok)
+  expect_equal(missing$x, rows)
+
+  testthat::local_mocked_bindings(
+    inspector_loader = function(...) stop("broken inspector"),
+    .package = "DataEntry"
+  )
+
+  blocked <- DataEntry:::validate_before_save(
+    list(ignore_checks = FALSE), rows, "data_entry", panel
+  )
+  expect_false(blocked$ok)
+  expect_equal(nrow(blocked$issues), 1L)
+
+  overridden <- DataEntry:::validate_before_save(
+    list(ignore_checks = TRUE), rows, "data_entry", panel
+  )
+  expect_true(overridden$ok)
+  expect_equal(overridden$x, rows)
+  expect_equal(nrow(overridden$issues), 1L)
+
+  mandatory <- DataEntry:::validate_before_save(
+    list(ignore_checks = TRUE), rows, "data_entry", panel, allow_ignore = FALSE
+  )
+  expect_false(mandatory$ok)
+})
+
 test_that("server_edit_rcode saves valid inspector code", {
   saved <- new.env(parent = emptyenv())
   saved$n <- 0L
