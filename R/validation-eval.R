@@ -1,4 +1,15 @@
 inspector_loader <- function(table_name, ...) {
+  if (file.exists("inspector.R")) {
+    inspector <- readLines("inspector.R", warn = FALSE)
+
+    # An empty or comment-only file defines no validation rules.
+    if (length(parse(text = inspector, keep.source = FALSE)) == 0) {
+      return(function(x, ...) list())
+    }
+
+    return(inspector_from_text(inspector))
+  }
+
   if (!inspectors_table_exists()) {
     if (!is.null(shiny::getDefaultReactiveDomain())) {
       showNotification(
@@ -152,7 +163,7 @@ try_validator <- function(..., nam = "") {
 #' @export
 evalidators <- function(
   L,
-  msg = "Inspector validation failed. Open the inspectors table and check the inspector definition."
+  msg = "Inspector validation failed. Check inspector.R or the inspector definition in the inspectors table."
 ) {
   o <- try(rbindlist(L, fill = TRUE), silent = TRUE)
 

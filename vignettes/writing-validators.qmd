@@ -216,6 +216,15 @@ Inspectors are lists of validators. Add a comma between validator expressions.
 
 The expression below is the kind of code that can be added to the `inspectors` table. Once it is stored for a table, DataEntry evaluates it with that table available as `x`.
 
+Alternatively, save a single `list(...)` expression in `inspector.R` alongside
+the app's `global.R`, `server.R`, and `ui.R`. When this file exists in the app
+directory, DataEntry loads it instead of querying the `inspectors` table.
+The current table is available as `x`, with the same execution timeout and
+validation error handling used for database inspectors. An empty or comment-only
+file defines no rules. If the file cannot be read, contains invalid R code, or
+fails during evaluation, DataEntry reports a validation issue through the usual
+save workflow. It does not fall back to database rules when the file exists.
+
 ```{r}
 list(
   x[, .(species, site, date, caught, released, nest_id, observer)] |>

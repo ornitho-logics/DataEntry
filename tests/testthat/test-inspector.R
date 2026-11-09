@@ -90,6 +90,74 @@ test_that("inspector_from_text evaluates inspector text with x in scope", {
   expect_equal(out$reason, "mandatory")
 })
 
+test_that("inspector.R takes precedence over database inspectors", {
+  withr::local_tempdir() |> withr::local_dir()
+  writeLines("list(x[, .(a)] |> is.na_validator())", "inspector.R")
+  local_mocked_bindings(
+    inspectors_table_exists = function() fail("should not check the database"),
+    db_get = function(...) fail("should not query the database"),
+    .package = "DataEntry"
+  )
+
+  out <- validation_issues(data.table(a = c(1, NA)), "data_entry")
+
+  expect_equal(out$rowid, "2")
+  expect_equal(out$variable, "a")
+  expect_equal(out$reason, "mandatory")
+})
+
+test_that("empty and comment-only inspector files define no rules", {
+  withr::local_tempdir() |> withr::local_dir()
+  local_mocked_bindings(
+    inspectors_table_exists = function() fail("should not check the database"),
+    .package = "DataEntry"
+  )
+
+  for (code in c("", "\n  \n# No rules", "list()")) {
+    writeLines(code, "inspector.R")
+
+    out <- validation_issues(data.table(a = NA_real_), "data_entry")
+
+    expect_equal(nrow(out), 0L)
+    expect_setequal(names(out), c("rowid", "variable", "reason"))
+  }
+})
+
+test_that("broken inspector files become validation issues without a database fallback", {
+  withr::local_tempdir() |> withr::local_dir()
+  local_mocked_bindings(
+    inspectors_table_exists = function() fail("should not check the database"),
+    .package = "DataEntry"
+  )
+
+  for (code in c("list(", "stop('broken inspector')", "list(data.frame(a = 1))")) {
+    writeLines(code, "inspector.R")
+
+    out <- validation_issues(data.table(a = 1), "data_entry")
+
+    expect_equal(nrow(out), 1L)
+    expect_true(is.na(out$rowid))
+    expect_match(out$reason, "Inspector validation failed")
+    expect_match(out$reason, "inspector.R", fixed = TRUE)
+  }
+})
+
+test_that("an unreadable inspector file becomes a validation issue", {
+  withr::local_tempdir() |> withr::local_dir()
+  # A directory at this path exists but cannot be read as an R source file.
+  dir.create("inspector.R")
+  local_mocked_bindings(
+    inspectors_table_exists = function() fail("should not check the database"),
+    .package = "DataEntry"
+  )
+
+  out <- suppressWarnings(validation_issues(data.table(a = 1), "data_entry"))
+
+  expect_equal(nrow(out), 1L)
+  expect_true(is.na(out$rowid))
+  expect_match(out$reason, "Inspector validation failed")
+})
+
 test_that("inspector_loader reads inspector text from db_get", {
   local_mocked_bindings(
     inspectors_table_exists = function() TRUE,
