@@ -11,7 +11,7 @@ into a comma-separated string.
 evalidators(
   L,
   msg =
-    "Inspector validation failed. Open the inspectors table and check the inspector definition."
+    "Inspector validation failed. Check inspector.R or the inspector definition in the inspectors table."
 )
 ```
 

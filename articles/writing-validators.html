@@ -408,6 +408,7 @@
 </h2>
 <p>Inspectors are lists of validators. Add a comma between validator expressions.</p>
 <p>The expression below is the kind of code that can be added to the <code>inspectors</code> table. Once it is stored for a table, DataEntry evaluates it with that table available as <code>x</code>.</p>
+<p>Alternatively, save a single <code>list(...)</code> expression in <code>inspector.R</code> alongside the app’s <code>global.R</code>, <code>server.R</code>, and <code>ui.R</code>. When this file exists in the app directory, DataEntry loads it instead of querying the <code>inspectors</code> table. The current table is available as <code>x</code>, with the same execution timeout and validation error handling used for database inspectors. An empty or comment-only file defines no rules. If the file cannot be read, contains invalid R code, or fails during evaluation, DataEntry reports a validation issue through the usual save workflow. It does not fall back to database rules when the file exists.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
