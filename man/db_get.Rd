@@ -19,7 +19,6 @@ A data.table.
 \description{
 Run a MariaDB query and return a data.table
 }
-
 \details{
 Read connections are reused within a Shiny session and closed when it ends.
 Reads outside a Shiny session close their connection after each call.

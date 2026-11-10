@@ -36,6 +36,10 @@ window.DataEntryLoading = {
         event.stopImmediatePropagation();
         return;
       }
+      var ignoreChecks = document.getElementById('ignore_checks');
+      status.querySelector('.dataentry-save-message span').textContent =
+        ignoreChecks && ignoreChecks.checked ?
+          'Saving without validation' : 'Validating data...';
       saving = true;
       status.hidden = false;
     }, true);
