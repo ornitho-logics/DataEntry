@@ -4,7 +4,8 @@ test_that("dataentry_deps registers expected html dependencies", {
 
   expect_setequal(
     names,
-    c("dataentry-style", "popper", "tippy", "dataentry-code-cell-renderer")
+    c("dataentry-style", "popper", "tippy", "dataentry-loading",
+      "dataentry-code-cell-renderer")
   )
 })
 

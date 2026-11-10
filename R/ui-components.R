@@ -54,6 +54,24 @@ ddmenu <- function(
 }
 
 
+dataentry_loading_ui <- function() {
+  content <- tagList(
+    waiter::spin_fading_circles(),
+    tags$p("Loading...", id = "dataentry-loading-message", role = "status",
+           `aria-live` = "polite")
+  )
+
+  tagList(
+    waiter::use_waiter(),
+    tags$script(HTML(paste0(
+      "DataEntryLoading.start(",
+      jsonlite::toJSON(list(html = as.character(content), color = "#f5f3ef"),
+                       auto_unbox = TRUE),
+      ");"
+    )))
+  )
+}
+
 dataentry_deps <- function() {
   htmltools::tagList(
     htmltools::tags$head(
@@ -93,6 +111,14 @@ dataentry_deps <- function() {
       version = as.character(packageVersion("DataEntry")),
       src = c(file = "style"),
       stylesheet = "style.css",
+      package = "DataEntry"
+    ),
+
+    htmltools::htmlDependency(
+      name = "dataentry-loading",
+      version = as.character(packageVersion("DataEntry")),
+      src = c(file = "JS"),
+      script = "loading.js",
       package = "DataEntry"
     ),
 

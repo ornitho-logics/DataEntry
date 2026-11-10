@@ -33,6 +33,8 @@ ui_edit_rcode <- function(table_name = "inspectors") {
   bootstrapPage(
     dataentry_deps(),
 
+    dataentry_loading_ui(),
+
     rHandsontableOutput("table", width = "100%", height = "100vh"),
 
     uiOutput("invalid_entries_panel"),

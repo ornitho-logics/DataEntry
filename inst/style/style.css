@@ -50,6 +50,19 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
+/* Cover the menu and validation panel as well as the grid while working. */
+.waiter-overlay {
+  z-index: 40000 !important;
+}
+
+.waiter-overlay .waiter-overlay-content {
+  color: var(--de-text);
+}
+
+.waiter-overlay .sk-fading-circle .sk-circle:before {
+  background-color: var(--de-primary);
+}
+
 .dataentry-ddmenu {
   position: absolute;
   top: 0;
