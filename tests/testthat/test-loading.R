@@ -52,7 +52,7 @@ test_that("editors use a grid spinner without the waiter bundle", {
     names <- vapply(rendered$dependencies, `[[`, character(1), "name")
     expect_true("shinycssloaders-binding" %in% names)
     expect_false("waiter" %in% names)
-    expect_match(rendered$html, "Checking and saving data...", fixed = TRUE)
+    expect_match(rendered$html, "Validating data...", fixed = TRUE)
     expect_match(rendered$html, 'id="dataentry-save-status" hidden', fixed = TRUE)
     expect_no_match(rendered$html, "shiny-spinner-hideui", fixed = TRUE)
   }

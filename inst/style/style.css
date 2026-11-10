@@ -57,25 +57,26 @@ body {
 
 #dataentry-save-status:not([hidden]) {
   position: fixed;
-  bottom: 12px;
-  left: 12px;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 20002;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   max-width: calc(100vw - 24px);
-  padding: 8px 12px;
+  padding: 12px 16px;
   border: 1px solid var(--de-border);
   border-radius: 8px;
   box-shadow: var(--de-shadow-soft);
   background: var(--de-surface-solid);
   color: var(--de-text);
-  font-size: 13px;
+  font-size: 14px;
   pointer-events: none;
 }
 
 #dataentry-save-status .fa-spin {
-  font-size: 14px;
+  font-size: 28px;
   color: var(--de-primary);
 }
 
