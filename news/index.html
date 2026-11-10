@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DataEntry</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,6 +34,13 @@
       <small>Source: <a href="https://github.com/ornitho-logics/DataEntry/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.2.1" id="dataentry-121">DataEntry 1.2.1<a class="anchor" aria-label="anchor" href="#dataentry-121"></a></h2>
+<ul><li>Replace the full-page <code>waiter</code> loader with a smaller <code>shinycssloaders</code> grid spinner, removing its JavaScript bundle and the wait for unrelated Shiny work at startup.</li>
+<li>Show “Checking and saving data…” immediately on Save, covering validation as well as the database write. Keep duplicate-click protection and clear the feedback on completion or disconnect.</li>
+<li>Keep the data visible during refreshes and show Save feedback in a small, non-blocking corner indicator instead of covering the page.</li>
+<li>Remove an unused Google Fonts stylesheet that could hold up page rendering on slow connections; retain the existing system font.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.0" id="dataentry-120">DataEntry 1.2.0<a class="anchor" aria-label="anchor" href="#dataentry-120"></a></h2>
 <ul><li>Show a full-page loading spinner until the grid is ready in all data-entry editors, including on slow connections.</li>
