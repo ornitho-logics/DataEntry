@@ -27,6 +27,17 @@ db_con <- function(
 	.cnf = NULL,
 	group = NULL
 ) {
+	settings <- db_connection_settings(.cnf, group)
+
+	DBI::dbConnect(
+		drv = RMariaDB::MariaDB(),
+		default.file = settings$.cnf,
+		group = settings$group
+	)
+}
+
+
+db_connection_settings <- function(.cnf = NULL, group = NULL) {
 	if (is.null(.cnf)) {
 		if (exists("cnf_path", envir = .GlobalEnv, inherits = FALSE)) {
 			.cnf <- get("cnf_path", envir = .GlobalEnv)
@@ -57,10 +68,65 @@ db_con <- function(
 		)
 	}
 
-	DBI::dbConnect(
-		drv = RMariaDB::MariaDB(),
-		default.file = path.expand(.cnf),
-		group = group
+	list(.cnf = path.expand(.cnf), group = group)
+}
+
+
+# Read connections belong to a Shiny session. Writes keep their dedicated
+# connections and transaction lifecycle.
+
+close_read_connection <- function(cache) {
+	if (!is.null(cache$con)) {
+		suppressWarnings(try(DBI::dbDisconnect(cache$con), silent = TRUE))
+	}
+	cache$con <- NULL
+	cache$settings <- NULL
+}
+
+read_connection_cache <- function() {
+	session <- shiny::getDefaultReactiveDomain()
+	if (is.null(session)) {
+		return(NULL)
+	}
+	if (is.null(session$userData$dataentry_read_connection)) {
+		session$userData$dataentry_read_connection <- new.env(parent = emptyenv())
+	}
+	cache <- session$userData$dataentry_read_connection
+
+	if (!isTRUE(cache$cleanup_registered)) {
+		shiny::onStop(function() {
+			close_read_connection(cache)
+			cache$cleanup_registered <- FALSE
+		}, session = session)
+		cache$cleanup_registered <- TRUE
+	}
+	cache
+}
+
+with_read_connection <- function(fun, ...) {
+	settings <- db_connection_settings(...)
+	cache <- read_connection_cache()
+	if (is.null(cache)) {
+		con <- do.call(db_con, settings)
+		on.exit(DBI::dbDisconnect(con), add = TRUE)
+		return(fun(con))
+	}
+	valid <- !is.null(cache$con) && identical(cache$settings, settings) &&
+		isTRUE(tryCatch(DBI::dbIsValid(cache$con), error = function(e) FALSE))
+
+	if (!valid) {
+		close_read_connection(cache)
+		cache$con <- do.call(db_con, settings)
+		cache$settings <- settings
+	}
+
+	tryCatch(
+		fun(cache$con),
+		error = function(e) {
+			# Do not replay SQL automatically: callers may have side effects.
+			close_read_connection(cache)
+			stop(e)
+		}
 	)
 }
 
@@ -70,22 +136,24 @@ db_con <- function(
 #' @param ... Additional arguments passed to `db_con()`.
 #' @param params Optional query parameters passed to `DBI::dbGetQuery()`.
 #'
+#' @details
+#' Read connections are reused within a Shiny session and closed when it ends.
+#' Reads outside a Shiny session close their connection after each call.
+#' Failed queries discard the connection and are not retried automatically.
+#'
 #' @return A data.table.
 #' @export
 db_get <- function(query, ..., params = NULL) {
-	con <- db_con(...)
-
-	on.exit(DBI::dbDisconnect(con))
-
-	if (is.null(params)) {
-		x <- DBI::dbGetQuery(con, query)
-	} else {
-		x <- DBI::dbGetQuery(con, query, params = params)
-	}
-
-	x |>
-		data.table::as.data.table()
+	with_read_connection(function(con) {
+		if (is.null(params)) {
+			x <- DBI::dbGetQuery(con, query)
+		} else {
+			x <- DBI::dbGetQuery(con, query, params = params)
+		}
+		data.table::as.data.table(x)
+	}, ...)
 }
+
 
 append_db_table <- function(x, table_name) {
 	con <- NULL

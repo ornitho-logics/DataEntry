@@ -75,11 +75,9 @@ emptyFrame <- function(
 }
 
 hot_db_table <- function(table, n_empty = 10, exclude_columns = character()) {
-  con <- db_con()
-  on.exit(DBI::dbDisconnect(con), add = TRUE)
-
-  dat <-
-    DBI::dbReadTable(con, table) |>
+  dat <- with_read_connection(function(con) {
+    DBI::dbReadTable(con, table)
+  }) |>
     setDT() |>
     hot_safe_table()
 
@@ -137,11 +135,9 @@ save_from_hot <- function(input, table, drop_empty = FALSE) {
 
 
 hot_db_table <- function(table, n_empty = 10, exclude_columns = character()) {
-  con <- db_con()
-  on.exit(DBI::dbDisconnect(con), add = TRUE)
-
-  dat <-
-    DBI::dbReadTable(con, table) |>
+  dat <- with_read_connection(function(con) {
+    DBI::dbReadTable(con, table)
+  }) |>
     setDT() |>
     hot_safe_table()
 

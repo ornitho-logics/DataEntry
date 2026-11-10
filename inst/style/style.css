@@ -348,11 +348,12 @@ body {
 
 
 .dataentry-issues-panel {
+  box-sizing: border-box;
   position: fixed;
-  right: 16px;
-  bottom: 16px;
-  width: min(720px, calc(100vw - 32px));
-  height: min(360px, calc(100vh - 32px));
+  top: 16px;
+  left: max(16px, calc((100vw - 840px) / 2));
+  width: min(840px, calc(100vw - 32px));
+  height: min(420px, calc(100vh - 32px));
   z-index: 20000;
   overflow: hidden;
   background: var(--de-surface);
@@ -378,7 +379,7 @@ body {
 .dataentry-issues-panel-header h4 {
   margin: 0;
   color: #111111;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.1;
   font-weight: 700;
 }
@@ -401,7 +402,7 @@ body {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.2;
   color: var(--de-text);
   background: var(--de-surface-solid);
@@ -442,14 +443,14 @@ body {
 
 @media (max-width: 1100px) {
   .dataentry-issues-panel {
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
-    height: min(30vh, 260px);
+    top: 8px;
+    left: max(8px, calc((100vw - 840px) / 2));
+    width: min(840px, calc(100vw - 16px));
+    height: min(420px, calc(100vh - 16px));
   }
 
   .dataentry-issues-panel table {
-    font-size: 11.5px;
+    font-size: 12.5px;
   }
 
   .dataentry-issues-panel th {
