@@ -57,10 +57,17 @@ body {
 
 #dataentry-save-status:not([hidden]) {
   position: fixed;
+  inset: 0;
+  z-index: 40000;
+  background: rgba(255, 255, 255, 0.08);
+  cursor: wait;
+}
+
+#dataentry-save-status .dataentry-save-message {
+  position: absolute;
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 20002;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -72,7 +79,6 @@ body {
   background: var(--de-surface-solid);
   color: var(--de-text);
   font-size: 14px;
-  pointer-events: none;
 }
 
 #dataentry-save-status .fa-spin {

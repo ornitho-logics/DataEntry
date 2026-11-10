@@ -5,8 +5,9 @@
   at startup.
 * Show "Validating data..." immediately on Save. Keep duplicate-click protection
   and clear the feedback on completion or disconnect.
-* Keep the data visible during refreshes and show Save feedback with a larger,
-  non-blocking spinner at the upper center of the page.
+* Keep the data visible during refreshes and show Save feedback with a larger
+  spinner at the upper center of the page. Block mouse and keyboard interaction
+  during validation and saving while keeping the data visible.
 * Remove an unused Google Fonts stylesheet that could hold up page rendering
   on slow connections; retain the existing system font.
 

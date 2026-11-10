@@ -61,8 +61,11 @@ dataentry_loading_ui <- function() {
       hidden = NA,
       role = "status",
       `aria-live` = "polite",
-      icon("spinner", class = "fa-spin", `aria-hidden` = "true"),
-      tags$span("Validating data...")
+      tags$div(
+        class = "dataentry-save-message",
+        icon("spinner", class = "fa-spin", `aria-hidden` = "true"),
+        tags$span("Validating data...")
+      )
     ),
     tags$script(HTML("DataEntryLoading.start();"))
   )

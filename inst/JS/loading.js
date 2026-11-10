@@ -10,10 +10,26 @@ window.DataEntryLoading = {
       status.hidden = true;
     }
 
+    function blockInteraction(event) {
+      if (!saving) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+
+    // The overlay catches pointer input; capture keyboard edits too, since the
+    // grid may still have focus when Save is activated.
+    ['keydown', 'beforeinput', 'paste', 'cut'].forEach(function (name) {
+      document.addEventListener(name, blockInteraction, true);
+    });
+
     document.addEventListener('click', function (event) {
+      if (saving) {
+        blockInteraction(event);
+        return;
+      }
       var button = event.target.closest('#saveButton');
       if (!button) return;
-      if (loading || saving || button.disabled ||
+      if (loading || button.disabled ||
           button.classList.contains('disabled') ||
           button.classList.contains('dataentry-button-disabled')) {
         event.preventDefault();
