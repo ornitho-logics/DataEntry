@@ -28,3 +28,10 @@ db_get(query, ..., params = NULL)
 ## Value
 
 A data.table.
+
+## Details
+
+Read connections are reused within a Shiny session and closed when it
+ends. Reads outside a Shiny session close their connection after each
+call. Failed queries discard the connection and are not retried
+automatically.
