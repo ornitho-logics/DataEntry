@@ -37,8 +37,8 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.1" id="dataentry-121">DataEntry 1.2.1<a class="anchor" aria-label="anchor" href="#dataentry-121"></a></h2>
 <ul><li>Replace the full-page <code>waiter</code> loader with a smaller <code>shinycssloaders</code> grid spinner, removing its JavaScript bundle and the wait for unrelated Shiny work at startup.</li>
-<li>Show “Checking and saving data…” immediately on Save, covering validation as well as the database write. Keep duplicate-click protection and clear the feedback on completion or disconnect.</li>
-<li>Keep the data visible during refreshes and show Save feedback in a small, non-blocking corner indicator instead of covering the page.</li>
+<li>Show “Validating data…” immediately on Save. Keep duplicate-click protection and clear the feedback on completion or disconnect.</li>
+<li>Keep the data visible during refreshes and show Save feedback with a larger, non-blocking spinner at the upper center of the page.</li>
 <li>Remove an unused Google Fonts stylesheet that could hold up page rendering on slow connections; retain the existing system font.</li>
 </ul></div>
     <div class="section level2">

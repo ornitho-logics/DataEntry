@@ -5,11 +5,10 @@
 - Replace the full-page `waiter` loader with a smaller `shinycssloaders`
   grid spinner, removing its JavaScript bundle and the wait for
   unrelated Shiny work at startup.
-- Show “Checking and saving data…” immediately on Save, covering
-  validation as well as the database write. Keep duplicate-click
+- Show “Validating data…” immediately on Save. Keep duplicate-click
   protection and clear the feedback on completion or disconnect.
-- Keep the data visible during refreshes and show Save feedback in a
-  small, non-blocking corner indicator instead of covering the page.
+- Keep the data visible during refreshes and show Save feedback with a
+  larger, non-blocking spinner at the upper center of the page.
 - Remove an unused Google Fonts stylesheet that could hold up page
   rendering on slow connections; retain the existing system font.
 
