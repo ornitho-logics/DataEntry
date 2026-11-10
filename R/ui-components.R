@@ -55,41 +55,21 @@ ddmenu <- function(
 
 
 dataentry_loading_ui <- function() {
-  content <- tagList(
-    waiter::spin_fading_circles(),
-    tags$p("Loading...", id = "dataentry-loading-message", role = "status",
-           `aria-live` = "polite")
-  )
-
   tagList(
-    waiter::use_waiter(),
-    tags$script(HTML(paste0(
-      "DataEntryLoading.start(",
-      jsonlite::toJSON(list(html = as.character(content), color = "#f5f3ef"),
-                       auto_unbox = TRUE),
-      ");"
-    )))
+    tags$div(
+      id = "dataentry-save-status",
+      hidden = NA,
+      role = "status",
+      `aria-live` = "polite",
+      icon("spinner", class = "fa-spin", `aria-hidden` = "true"),
+      tags$span("Checking and saving data...")
+    ),
+    tags$script(HTML("DataEntryLoading.start();"))
   )
 }
 
 dataentry_deps <- function() {
   htmltools::tagList(
-    htmltools::tags$head(
-      htmltools::tags$link(
-        rel = "preconnect",
-        href = "https://fonts.googleapis.com"
-      ),
-      htmltools::tags$link(
-        rel = "preconnect",
-        href = "https://fonts.gstatic.com",
-        crossorigin = NA
-      ),
-      htmltools::tags$link(
-        rel = "stylesheet",
-        href = "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-      )
-    ),
-
     htmltools::htmlDependency(
       name = "popper",
       version = "2.11.8",

@@ -1,4 +1,4 @@
-test_that("loading feedback covers delayed grids, save latency, and failure exits", {
+test_that("save feedback covers validation, network latency, and failure exits", {
   node <- Sys.which("node")
   skip_if(!nzchar(node), "Node.js is required to execute loading JavaScript")
 
@@ -7,50 +7,53 @@ test_that("loading feedback covers delayed grids, save latency, and failure exit
   writeLines(c(
     "const assert = require('node:assert/strict');",
     "global.window = global;",
-    "let grid = false, visible = false, shows = 0, hides = 0;",
-    "let click, changed, disconnected = false;",
-    "const message = {};",
+    "let click;",
+    "const status = {hidden: true};",
     "const handlers = {};",
-    "global.document = {body: {},",
-    "  querySelector: () => grid,",
-    "  getElementById: () => message,",
+    "global.document = {",
+    "  getElementById: () => status,",
     "  addEventListener: (name, fn) => { click = fn; }",
     "};",
-    "global.MutationObserver = class {",
-    "  constructor(fn) { changed = fn; }",
-    "  observe() {}",
-    "  disconnect() { disconnected = true; }",
-    "};",
-    "global.waiter = {",
-    "  show: (options) => { assert.equal(options.id, null); visible = true; shows++; },",
-    "  hide: () => { visible = false; hides++; }",
-    "};",
-    "const events = {on: function(name, fn) { handlers[name.split('.')[0]] = fn; return this; }};",
+    "const events = {on: function(names, fn) {",
+    "  names.split(' ').forEach(name => { handlers[name.split('.')[0]] = fn; });",
+    "  return this;",
+    "}};",
     "global.$ = () => events;",
     readLines(system.file("JS", "loading.js", package = "DataEntry")),
-    "DataEntryLoading.start({});",
-    "assert(visible);",
-    "handlers['shiny:idle']();",
-    "assert(visible, 'idle before widget assets load must keep spinner');",
-    "grid = true; changed();",
-    "assert(!visible); assert(disconnected);",
+    "DataEntryLoading.start();",
+    "assert(status.hidden, 'startup must not display Save feedback');",
     "let disabled = false, stopped = false;",
     "const button = {disabled: false, classList: {contains: () => disabled}};",
     "const event = {target: {closest: () => button},",
     "  preventDefault() {}, stopImmediatePropagation() { stopped = true; }};",
-    "click(event);",
-    "assert(visible); assert.equal(message.textContent, 'Saving...');",
-    "const count = shows; click(event);",
-    "assert(stopped); assert.equal(shows, count);",
-    "handlers['shiny:busy'](); handlers['shiny:idle']();",
-    "assert(!visible, 'idle clears spinner even when no grid update is sent');",
-    "disabled = true; click(event); assert(!visible); disabled = false;",
-    "click(event); handlers['shiny:disconnected'](); assert(!visible);",
-    "grid = false; DataEntryLoading.start({});",
-    "handlers['shiny:busy'](); handlers['shiny:error']({name: 'table'});",
-    "handlers['shiny:idle'](); assert(!visible, 'table errors release loading overlay');"
+    "click(event); assert(stopped, 'Save must wait for the table value');",
+    "handlers['shiny:idle']();",
+    "stopped = false; click(event); assert(stopped, 'idle alone does not mean grid is ready');",
+    "handlers['shiny:value']({name: 'table'});",
+    "stopped = false; click(event);",
+    "assert(!status.hidden); assert(!stopped);",
+    "click(event); assert(stopped, 'duplicate clicks must be blocked');",
+    "handlers['shiny:idle']();",
+    "assert(status.hidden, 'idle clears feedback even when validation rejects the save');",
+    "disabled = true; click(event); assert(status.hidden); disabled = false;",
+    "click(event); handlers['shiny:disconnected'](); assert(status.hidden);",
+    "DataEntryLoading.start();",
+    "handlers['shiny:error']({name: 'table'}); handlers['shiny:idle']();",
+    "assert(status.hidden, 'table errors must not leave Save feedback');"
   ), script)
 
   result <- system2(node, script, stdout = TRUE, stderr = TRUE)
   expect_null(attr(result, "status"), info = paste(result, collapse = "\n"))
+})
+
+test_that("editors use a grid spinner without the waiter bundle", {
+  for (ui in list(ui_append_rows(), ui_edit_table(), ui_edit_rcode())) {
+    rendered <- htmltools::renderTags(ui)
+    names <- vapply(rendered$dependencies, `[[`, character(1), "name")
+    expect_true("shinycssloaders-binding" %in% names)
+    expect_false("waiter" %in% names)
+    expect_match(rendered$html, "Checking and saving data...", fixed = TRUE)
+    expect_match(rendered$html, 'id="dataentry-save-status" hidden', fixed = TRUE)
+    expect_no_match(rendered$html, "shiny-spinner-hideui", fixed = TRUE)
+  }
 })

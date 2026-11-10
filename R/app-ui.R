@@ -33,9 +33,16 @@ ui_edit_rcode <- function(table_name = "inspectors") {
   bootstrapPage(
     dataentry_deps(),
 
-    dataentry_loading_ui(),
+    shinycssloaders::withSpinner(
+      rHandsontableOutput("table", width = "100%", height = "100vh"),
+      type = 4,
+      color = "#54786f",
+      size = 0.7,
+      hide.ui = FALSE,
+      proxy.height = "100vh"
+    ),
 
-    rHandsontableOutput("table", width = "100%", height = "100vh"),
+    dataentry_loading_ui(),
 
     uiOutput("invalid_entries_panel"),
 
