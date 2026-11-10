@@ -63,10 +63,7 @@ inspector_from_text <- function(inspector) {
       expr <- expr
       x <- x
 
-      unix::eval_safe(
-        eval(expr),
-        timeout = 10
-      )
+      unix::eval_safe(eval(expr))
     })
   }
 }
