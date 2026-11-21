@@ -60,11 +60,19 @@ server_edit_table <- function(input, output, session) {
     out
   })
 
+  # One result per Save click, shared by the save gate and issues panel.
+  # The next click reruns validation against fresh input and database state.
+  Issues <- eventReactive(input$saveButton, {
+    validation_issues(Save(), table_name = table_name)
+  })
+  issues <- function(x) Issues()
+
   validation_panel <- validation_panel(
     input = input,
     output = output,
     Save = Save,
-    table_name = table_name
+    table_name = table_name,
+    issues = issues
   )
 
   observeEvent(input$saveButton, {
@@ -74,7 +82,8 @@ server_edit_table <- function(input, output, session) {
       input = input,
       x = x,
       table_name = table_name,
-      validation_panel = validation_panel
+      validation_panel = validation_panel,
+      issues = issues
     )
 
     if (!validation$ok) {
