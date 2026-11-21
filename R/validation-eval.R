@@ -10,7 +10,7 @@ inspector_loader <- function(table_name, ...) {
     return(inspector_from_text(inspector))
   }
 
-  if (!inspectors_table_exists()) {
+  if (!inspectors_table_exists(...)) {
     if (!is.null(shiny::getDefaultReactiveDomain())) {
       showNotification(
         ui = "The inspectors table is missing. Validation was skipped.",

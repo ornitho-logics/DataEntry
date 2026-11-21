@@ -249,15 +249,8 @@ replace_db_table <- function(x, table_name, backupdir) {
 }
 
 
-inspectors_table_exists <- function() {
-	tryCatch(
-		{
-			db_get("SHOW TABLES LIKE 'inspectors'") |>
-				nrow() >
-				0
-		},
-		error = function(e) FALSE
-	)
+inspectors_table_exists <- function(...) {
+	nrow(db_get("SHOW TABLES LIKE 'inspectors'", ...)) > 0L
 }
 
 #' @export
